@@ -1,4 +1,4 @@
-import 'package:Robeats/widgets/local_library_screen.dart';
+import 'package:Robeats/widgets/song_list_screen.dart';
 import 'package:flutter/material.dart';
 
 const String TITLE = "Robeats Player";
@@ -8,13 +8,11 @@ void main() {
 }
 
 class RobeatsApp extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: "Robeats Player",
-        home: new LocalLibraryScreen(),
+        home: new SongListScreen(),
         theme: RobeatsThemeData.getThemeData()
     );
   }

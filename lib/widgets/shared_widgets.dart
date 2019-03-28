@@ -1,7 +1,8 @@
 import 'package:Robeats/main.dart';
-import 'package:Robeats/widgets/local_library_screen.dart';
 import 'package:Robeats/widgets/local_network_screen.dart';
 import 'package:Robeats/widgets/play_screen.dart';
+import 'package:Robeats/widgets/playlist_screen.dart';
+import 'package:Robeats/widgets/song_list_screen.dart';
 import 'package:flutter/material.dart';
 
 class DarkBoxShadow extends BoxDecoration {
@@ -30,11 +31,20 @@ class RobeatsDrawer extends Drawer {
           ),
           ListTile(
             leading: Icon(Icons.book, size: 40.0,),
-            title: Text("Local Library"),
+            title: Text("Song List"),
             onTap: () {
               Navigator.pop(buildContext);
               Navigator.push(buildContext, MaterialPageRoute(
-                  builder: (buildContext) => LocalLibraryScreen()));
+                  builder: (buildContext) => SongListScreen()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.playlist_play, size: 40.0,),
+            title: Text("Playlists"),
+            onTap: () {
+              Navigator.pop(buildContext);
+              Navigator.push(buildContext, MaterialPageRoute(
+                  builder: (buildContext) => PlaylistScreen()));
             },
           ),
           ListTile(

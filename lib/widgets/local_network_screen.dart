@@ -22,7 +22,7 @@ class _LocalNetworkState extends State<LocalNetworkScreen> {
 
   GridView _createGridView() {
     List<Widget> widgets = [
-      _NetworkGridTile(globalLocalDevice)
+      _NetworkGridTile(Device.localDevice)
     ]; //todo: load this from bloc.
 
     return GridView.count(
@@ -39,12 +39,15 @@ class _NetworkGridTile extends GridTile {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Expanded(flex: 6, child: Icon(_chooseIcon(device.deviceType))),
+            Expanded(
+              flex: 6,
+              child: Icon(_chooseIcon(device.deviceType)),
+            ),
             Expanded(flex: 4, child: Text(
               device.chosenIdentifier,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white, fontSize: 15.0),
-            ))
+            )),
           ],
         ),
       )
