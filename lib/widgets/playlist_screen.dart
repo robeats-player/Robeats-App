@@ -13,7 +13,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
   @override
   Widget build(BuildContext context) {
     List<Widget> widgets = [ //todo: load from bloc as well.
-      _PlaylistGridTile(Playlist("playlist_1"))
+
     ];
 
     return Scaffold(
@@ -34,7 +34,10 @@ class _PlaylistGridTile extends GridTile {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Expanded(flex: 6, child: Icon(Icons.playlist_play)),
+            Expanded(
+                flex: 6, child: LayoutBuilder(builder: (context, constraint) =>
+                Icon(Icons.playlist_play, size: constraint.biggest.height)
+            )),
             Expanded(flex: 4, child: Text(
               playlist.identifier,
               textAlign: TextAlign.center,

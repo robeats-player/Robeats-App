@@ -38,7 +38,6 @@ class _SongListTile extends Container {
     ),
     margin: EdgeInsets.only(top: 5.0),
     decoration: BoxDecoration(
-        color: Colors.white,
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: Colors.white,

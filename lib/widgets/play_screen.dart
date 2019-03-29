@@ -1,4 +1,6 @@
+import 'package:Robeats/data/song_controller.dart';
 import 'package:Robeats/main.dart';
+import 'package:Robeats/network/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +29,8 @@ class _PlayScreenState extends State<PlayScreen> {
 
 class _MediaControls extends Container {
   // backward, play/pause, forward.
+  final SongDataController songDataController = SongDataController();
+
   _MediaControls() : super(
       child: Row( // outer row.
         mainAxisAlignment: MainAxisAlignment.center,
@@ -38,7 +42,15 @@ class _MediaControls extends Container {
           ),
           IconButton(
             iconSize: 60.0,
-            icon: Icon(Icons.play_circle_filled),
+            icon: DataControllerWidget((AsyncSnapshot<PlayingSong> snapshot) {
+              bool playing = snapshot.data != null
+                  ? snapshot.data.isPlaying()
+                  : false;
+
+              return Icon(
+                  playing ? Icons.pause_circle_filled : Icons.play_circle_filled
+              );
+            }),
             onPressed: null,
           ),
           IconButton(
@@ -61,7 +73,7 @@ class _MediaDisplay extends StatefulWidget {
 }
 
 class _MediaDisplayState extends State<_MediaDisplay> {
-  double _sliderValue = 0.35;
+  SongDataController songDataController = SongDataController();
 
   @override
   Widget build(BuildContext context) {
@@ -87,10 +99,13 @@ class _MediaDisplayState extends State<_MediaDisplay> {
             Container(
               child: Flexible(
                   flex: 1,
-                  child: Slider(
-                    value: _sliderValue,
-                    onChanged: (value) => setState(() => _sliderValue = value),
-                  )
+                  child: DataControllerWidget((
+                      AsyncSnapshot<PlayingSong> snapshot) {
+                    return Slider(
+                      value: snapshot.data != null ? snapshot.data.time : 0,
+                      onChanged: (value) => (snapshot.data)?.time = value,
+                    );
+                  })
               ),
             )
           ],
@@ -98,13 +113,27 @@ class _MediaDisplayState extends State<_MediaDisplay> {
         Row( // currently playing song.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              "Currenty Playing: some_song_name",
-              style: TextStyle(color: Colors.white),
-            )
+            DataControllerWidget((AsyncSnapshot<PlayingSong> snapshot) {
+              String songName = (snapshot.data)?.song?.identifier;
+
+              return Text(
+                songName != null
+                    ? "Currently Playing: $songName"
+                    : "Choose a song!",
+                style: TextStyle(color: Colors.white),
+              );
+            })
           ],
         ),
       ],
     );
   }
+
+  @override
+  void dispose() {
+    /* call the data controller's dispose function. */
+    songDataController.dispose();
+  }
+
+
 }

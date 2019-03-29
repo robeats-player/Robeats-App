@@ -69,3 +69,11 @@ class RobeatsDrawer extends Drawer {
       )
   );
 }
+
+class DataControllerWidget<T> extends StreamBuilder<T> {
+  DataControllerWidget(Function(AsyncSnapshot<T>) function) : super(
+      builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
+        return function(snapshot);
+      }
+  );
+}

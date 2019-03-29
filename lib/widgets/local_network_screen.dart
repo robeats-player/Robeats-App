@@ -41,7 +41,9 @@ class _NetworkGridTile extends GridTile {
           children: <Widget>[
             Expanded(
               flex: 6,
-              child: Icon(_chooseIcon(device.deviceType)),
+              child: LayoutBuilder(builder: (context, constraint) =>
+                  Icon(_chooseIcon(device.deviceType))
+              ),
             ),
             Expanded(flex: 4, child: Text(
               device.chosenIdentifier,
