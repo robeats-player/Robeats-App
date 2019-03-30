@@ -1,3 +1,5 @@
+import 'package:Robeats/data/media_library.dart';
+import 'package:Robeats/data/song_data_controller.dart';
 import 'package:Robeats/widgets/song_list_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -5,6 +7,11 @@ const String TITLE = "Robeats Player";
 
 void main() {
   runApp(new RobeatsApp());
+}
+
+class Robeats {
+  static MediaLibrary mediaLibrary = MediaLibrary();
+  static SongDataController songDataController = SongDataController();
 }
 
 class RobeatsApp extends StatelessWidget {

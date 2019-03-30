@@ -1,3 +1,5 @@
+import 'package:Robeats/main.dart';
+
 class Song {
   String _fileName;
   String identifier;
@@ -11,9 +13,9 @@ class Song {
     this.duration = duration;
   }
 
-  PlayingSong playSong() {
-    //todo: more implementation.
-    return PlayingSong(this, 0);
+  Future<String> get directory async {
+    String path = (await Robeats.mediaLibrary.directory).path;
+    return path + "/$_fileName";
   }
 }
 
@@ -21,9 +23,8 @@ class PlayingSong {
   Song song;
   double _time = -1;
 
-  PlayingSong(Song song, double time) {
+  PlayingSong(Song song) {
     this.song = song;
-    this.time = time;
   }
 
   double get time => _time;
@@ -32,11 +33,6 @@ class PlayingSong {
     if (-1 <= time && time <= song.duration.inSeconds) {
       this._time = time;
     }
-  }
-
-  void clearSong() {
-    song = null;
-    time = -1;
   }
 
   bool isPlaying() {

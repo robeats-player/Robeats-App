@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  dart_tags: ^0.1.1
+  audioplayers: ^0.10.1
   path_provider: ^0.5.0+1
   cupertino_icons: ^0.1.2
 

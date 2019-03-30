@@ -1,4 +1,3 @@
-import 'package:Robeats/data/song_controller.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/network/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
@@ -29,7 +28,6 @@ class _PlayScreenState extends State<PlayScreen> {
 
 class _MediaControls extends Container {
   // backward, play/pause, forward.
-  final SongDataController songDataController = SongDataController();
 
   _MediaControls() : super(
       child: Row( // outer row.
@@ -43,15 +41,12 @@ class _MediaControls extends Container {
           IconButton(
             iconSize: 60.0,
             icon: DataControllerWidget((AsyncSnapshot<PlayingSong> snapshot) {
-              bool playing = snapshot.data != null
-                  ? snapshot.data.isPlaying()
-                  : false;
-
-              return Icon(
-                  playing ? Icons.pause_circle_filled : Icons.play_circle_filled
-              );
+              return Icon(Icons.pause_circle_filled);
             }),
-            onPressed: null,
+            onPressed: () {
+              Robeats.mediaLibrary.playSong(
+                  Robeats.mediaLibrary.songSet.first); //todo: choose a song.
+            },
           ),
           IconButton(
             iconSize: 60.0,
@@ -73,7 +68,6 @@ class _MediaDisplay extends StatefulWidget {
 }
 
 class _MediaDisplayState extends State<_MediaDisplay> {
-  SongDataController songDataController = SongDataController();
 
   @override
   Widget build(BuildContext context) {
@@ -128,12 +122,4 @@ class _MediaDisplayState extends State<_MediaDisplay> {
       ],
     );
   }
-
-  @override
-  void dispose() {
-    /* call the data controller's dispose function. */
-    songDataController.dispose();
-  }
-
-
 }

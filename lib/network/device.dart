@@ -6,6 +6,7 @@ enum DeviceType {
 
 class Device {
   static final Device localDevice = Device._localDeviceConstructor();
+
   final String uuid;
   DeviceType deviceType;
   String chosenIdentifier;
