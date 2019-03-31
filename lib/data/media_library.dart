@@ -8,12 +8,14 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:dart_tags/dart_tags.dart';
 
 class MediaLibrary {
-  AudioPlayer audioPlayer;
+  AudioPlayer _audioPlayer;
+  Song _currentlyPlayingSong;
+  SongDataController _songDataController = Robeats.songDataController;
   Set<Song> _songSet = Set();
   Queue _songQueue = Queue();
 
   MediaLibrary() {
-    loadAudioPlayer();
+    _loadAudioPlayer();
     loadSongs();
   }
 
@@ -26,9 +28,18 @@ class MediaLibrary {
     return Directory(appDataDirectory.path + "/" + "music");
   }
 
-  void loadAudioPlayer() {
-    audioPlayer = AudioPlayer();
-    //todo: more loading...
+  void _loadAudioPlayer() {
+    _audioPlayer = AudioPlayer();
+
+    _audioPlayer.onAudioPositionChanged.listen((duration) {
+      double durationFraction = (duration.inSeconds /
+          _currentlyPlayingSong.duration.inSeconds);
+      _songDataController.durationSink.add(durationFraction);
+    });
+
+    _audioPlayer.onPlayerCompletion.listen((event) {
+      stop();
+    });
   }
 
   void loadSongs() async {
@@ -44,23 +55,25 @@ class MediaLibrary {
         String artist = metaTags.tags['artist'];
 
         _songSet.add(Song(
-            fileName, songTitle, artist, Duration(minutes: 1)
+            fileName, songTitle, artist, null
         ));
       }
     }
   }
 
-  void playQueue() {
-    //todo: implement.
-  }
-
   void playSong(Song song) async {
     String url = await song.directory;
-    PlayingSong playingSong = PlayingSong(song);
-
     stop();
-    audioPlayer.play(url, volume: 0.35); //todo: implement volume.
-    _updateSink(playingSong);
+
+    _audioPlayer.play(url, volume: 0.35);
+    _currentlyPlayingSong = song;
+    _songDataController.songSink.add(song);
+
+    song.duration ??= await _audioPlayer.onDurationChanged.first;
+  }
+
+  void playQueue() {
+    //todo implement.
   }
 
   void playPlaylist(Playlist playlist) {
@@ -71,10 +84,11 @@ class MediaLibrary {
   }
 
   void stop() {
-    SongDataController dataController = Robeats.songDataController;
+    _audioPlayer.stop();
+    _audioPlayer.release();
 
-    dataController.songSink.add(null);
-    audioPlayer.stop();
+    _songDataController.songSink.add(null);
+    _currentlyPlayingSong = null;
   }
 
   void shuffle() {
@@ -85,9 +99,13 @@ class MediaLibrary {
     //todo: implement.
   }
 
-  void _updateSink(PlayingSong song) {
-    SongDataController dataController = Robeats.songDataController;
-    dataController.songSink.add(song);
+  void seekFraction(double fraction) async {
+    Duration duration = _currentlyPlayingSong.duration * fraction;
+    seekTime(duration);
+  }
+
+  void seekTime(Duration duration) {
+    _audioPlayer.seek(duration);
   }
 
   static String _getFileName(FileSystemEntity entity) {
@@ -100,7 +118,7 @@ class MediaLibrary {
     TagProcessor tagProcessor = TagProcessor();
     List<Tag> tags = await tagProcessor.getTagsFromByteArray(
         file.readAsBytes(),
-        [TagType.id3v2]
+        [TagType.id3v1]
     );
 
     return tags.isNotEmpty ? tags[0] : null;

@@ -1,3 +1,5 @@
+import 'package:Robeats/data/media_library.dart';
+import 'package:Robeats/data/song_data_controller.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/network/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
@@ -40,9 +42,7 @@ class _MediaControls extends Container {
           ),
           IconButton(
             iconSize: 60.0,
-            icon: DataControllerWidget((AsyncSnapshot<PlayingSong> snapshot) {
-              return Icon(Icons.pause_circle_filled);
-            }),
+            icon: Icon(Icons.pause_circle_filled),
             onPressed: () {
               Robeats.mediaLibrary.playSong(
                   Robeats.mediaLibrary.songSet.first); //todo: choose a song.
@@ -68,6 +68,8 @@ class _MediaDisplay extends StatefulWidget {
 }
 
 class _MediaDisplayState extends State<_MediaDisplay> {
+  SongDataController songDataController = Robeats.songDataController;
+  MediaLibrary mediaLibrary = Robeats.mediaLibrary;
 
   @override
   Widget build(BuildContext context) {
@@ -93,13 +95,18 @@ class _MediaDisplayState extends State<_MediaDisplay> {
             Container(
               child: Flexible(
                   flex: 1,
-                  child: DataControllerWidget((
-                      AsyncSnapshot<PlayingSong> snapshot) {
-                    return Slider(
-                      value: snapshot.data != null ? snapshot.data.time : 0,
-                      onChanged: (value) => (snapshot.data)?.time = value,
-                    );
-                  })
+                  child: StreamBuilder(
+                    stream: songDataController.durationStream,
+                    builder: (BuildContext buildContext,
+                        AsyncSnapshot<double> snapshot) {
+                      return Slider(
+                        value: snapshot.data != null ? snapshot.data : 0,
+                        onChanged: (value) {
+                          mediaLibrary.seekFraction(value);
+                        },
+                      );
+                    },
+                  )
               ),
             )
           ],
@@ -107,16 +114,19 @@ class _MediaDisplayState extends State<_MediaDisplay> {
         Row( // currently playing song.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            DataControllerWidget((AsyncSnapshot<PlayingSong> snapshot) {
-              String songName = (snapshot.data)?.song?.identifier;
+            StreamBuilder(
+              stream: songDataController.songStream,
+              builder: (BuildContext context, AsyncSnapshot<Song> snapshot) {
+                String songName = (snapshot.data)?.identifier;
 
-              return Text(
-                songName != null
-                    ? "Currently Playing: $songName"
-                    : "Choose a song!",
-                style: TextStyle(color: Colors.white),
-              );
-            })
+                return Text(
+                  songName != null
+                      ? "Currently Playing: $songName"
+                      : "Choose a song!",
+                  style: TextStyle(color: Colors.white),
+                );
+              },
+            )
           ],
         ),
       ],

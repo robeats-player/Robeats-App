@@ -1,3 +1,4 @@
+import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/network/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
@@ -11,9 +12,11 @@ class SongListScreen extends StatefulWidget {
 }
 
 class _SongListScreenState extends State<SongListScreen> {
+  MediaLibrary mediaLibrary = Robeats.mediaLibrary;
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = Robeats.mediaLibrary.songSet.map((song) {
+    List<Widget> widgets = mediaLibrary.songSet.map((song) {
       return _SongListTile(song);
     }).toList();
 
@@ -48,8 +51,9 @@ class _SongListTile extends Container {
   );
 
   static String _prettyDuration(Duration duration) {
-    int trailingSeconds = duration.inSeconds -
-        (duration.inMinutes.floor() * 60);
-    return "${duration.inMinutes}:$trailingSeconds";
+    int minutes = duration != null ? duration.inMinutes : 0;
+    int trailingSeconds = duration != null ? (duration.inSeconds % 60) : 0;
+
+    return "$minutes:$trailingSeconds";
   }
 }

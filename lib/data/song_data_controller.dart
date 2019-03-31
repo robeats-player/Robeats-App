@@ -5,22 +5,22 @@ import 'package:Robeats/network/media.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SongDataController {
-  PlayingSong _playingSong;
+  var _songStreamController = StreamController<Song>();
+  var _durationStreamController = StreamController<double>();
 
-  var _songStreamController = StreamController<PlayingSong>();
+  Stream<Song> get songStream => _songStreamController.stream;
 
-  Stream<PlayingSong> get songStream => _songStreamController.stream;
+  Sink<Song> get songSink => _songStreamController.sink;
 
-  Sink<PlayingSong> get songSink => _songStreamController.sink;
+  Stream<double> get durationStream => _durationStreamController.stream;
 
-  SongDataController() {
-    songStream.listen((playingSong) {
-      this._playingSong = playingSong;
-    });
-  }
+  Sink<double> get durationSink => _durationStreamController.sink;
+
+  SongDataController();
 
   void dispose() {
     _songStreamController.close();
+    _durationStreamController.close();
   }
 }
 

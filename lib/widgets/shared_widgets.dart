@@ -33,7 +33,6 @@ class RobeatsDrawer extends Drawer {
             leading: Icon(Icons.book, size: 40.0,),
             title: Text("Song List"),
             onTap: () {
-              Navigator.pop(buildContext);
               Navigator.push(buildContext, MaterialPageRoute(
                   builder: (buildContext) => SongListScreen()));
             },
@@ -42,7 +41,6 @@ class RobeatsDrawer extends Drawer {
             leading: Icon(Icons.playlist_play, size: 40.0,),
             title: Text("Playlists"),
             onTap: () {
-              Navigator.pop(buildContext);
               Navigator.push(buildContext, MaterialPageRoute(
                   builder: (buildContext) => PlaylistScreen()));
             },
@@ -51,7 +49,6 @@ class RobeatsDrawer extends Drawer {
             leading: Icon(Icons.play_circle_filled, size: 40.0,),
             title: Text("Now Playing"),
             onTap: () {
-              Navigator.pop(buildContext);
               Navigator.push(buildContext,
                   MaterialPageRoute(builder: (buildContext) => PlayScreen()));
             },
@@ -60,20 +57,11 @@ class RobeatsDrawer extends Drawer {
             leading: Icon(Icons.devices, size: 40.0,),
             title: Text("Network Devices"),
             onTap: () {
-              Navigator.pop(buildContext);
               Navigator.push(buildContext, MaterialPageRoute(
                   builder: (buildContext) => LocalNetworkScreen()));
             },
           )
         ],
       )
-  );
-}
-
-class DataControllerWidget<T> extends StreamBuilder<T> {
-  DataControllerWidget(Function(AsyncSnapshot<T>) function) : super(
-      builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
-        return function(snapshot);
-      }
   );
 }
