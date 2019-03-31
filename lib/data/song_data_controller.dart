@@ -3,18 +3,16 @@ import 'dart:io';
 
 import 'package:Robeats/network/media.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rxdart/subjects.dart';
 
 class SongDataController {
-  var _songStreamController = StreamController<Song>();
-  var _durationStreamController = StreamController<double>();
+  BehaviorSubject<Song> _songStreamController = BehaviorSubject<Song>();
+  BehaviorSubject<double> _durationStreamController = BehaviorSubject<double>();
 
-  Stream<Song> get songStream => _songStreamController.stream;
+  BehaviorSubject<Song> get songStreamController => _songStreamController;
 
-  Sink<Song> get songSink => _songStreamController.sink;
-
-  Stream<double> get durationStream => _durationStreamController.stream;
-
-  Sink<double> get durationSink => _durationStreamController.sink;
+  BehaviorSubject<double> get durationStreamController =>
+      _durationStreamController;
 
   SongDataController();
 

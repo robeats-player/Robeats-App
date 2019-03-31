@@ -44,8 +44,7 @@ class _MediaControls extends Container {
             iconSize: 60.0,
             icon: Icon(Icons.pause_circle_filled),
             onPressed: () {
-              Robeats.mediaLibrary.playSong(
-                  Robeats.mediaLibrary.songSet.first); //todo: choose a song.
+              Robeats.mediaLibrary.toggleState();
             },
           ),
           IconButton(
@@ -68,8 +67,8 @@ class _MediaDisplay extends StatefulWidget {
 }
 
 class _MediaDisplayState extends State<_MediaDisplay> {
-  SongDataController songDataController = Robeats.songDataController;
-  MediaLibrary mediaLibrary = Robeats.mediaLibrary;
+  final SongDataController songDataController = Robeats.songDataController;
+  final MediaLibrary mediaLibrary = Robeats.mediaLibrary;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +95,7 @@ class _MediaDisplayState extends State<_MediaDisplay> {
               child: Flexible(
                   flex: 1,
                   child: StreamBuilder(
-                    stream: songDataController.durationStream,
+                    stream: songDataController.durationStreamController,
                     builder: (BuildContext buildContext,
                         AsyncSnapshot<double> snapshot) {
                       return Slider(
@@ -115,14 +114,22 @@ class _MediaDisplayState extends State<_MediaDisplay> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             StreamBuilder(
-              stream: songDataController.songStream,
+              stream: songDataController.songStreamController,
               builder: (BuildContext context, AsyncSnapshot<Song> snapshot) {
-                String songName = (snapshot.data)?.identifier;
+                String text;
+
+                if (snapshot.data == null) {
+                  text = "Choose a song!";
+                } else {
+                  String songName = snapshot.data?.title;
+                  String artistName = snapshot.data?.artist;
+
+                  text = "${(artistName ??= "Unreadable")} - ${(
+                      songName ??= "Unreadable")}";
+                }
 
                 return Text(
-                  songName != null
-                      ? "Currently Playing: $songName"
-                      : "Choose a song!",
+                  text,
                   style: TextStyle(color: Colors.white),
                 );
               },

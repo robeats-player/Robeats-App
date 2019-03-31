@@ -2,13 +2,13 @@ import 'package:Robeats/main.dart';
 
 class Song {
   String _fileName;
-  String identifier;
+  String title;
   String artist;
   Duration duration;
 
-  Song(String fileName, String identifier, String artist, Duration duration) {
+  Song(String fileName, String title, String artist, Duration duration) {
     this._fileName = fileName;
-    this.identifier = identifier;
+    this.title = title;
     this.artist = artist;
     this.duration = duration;
   }

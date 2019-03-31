@@ -35,9 +35,14 @@ class _SongListTile extends Container {
   _SongListTile(Song song) : super(
     child: ListTile(
         leading: Icon(Icons.music_note),
-        title: Text(song.identifier),
-        subtitle: Text("${song.artist}  -  ${_prettyDuration(song.duration)}"),
-        trailing: Icon(Icons.play_circle_filled)
+        title: Text("${song.title}"),
+        subtitle: Text("${song.artist}"),
+        trailing: IconButton(
+            icon: Icon(Icons.play_circle_filled),
+            onPressed: () {
+              Robeats.mediaLibrary.playSong(song);
+            }
+        )
     ),
     margin: EdgeInsets.only(top: 5.0),
     decoration: BoxDecoration(
@@ -49,11 +54,4 @@ class _SongListTile extends Container {
         ]
     ),
   );
-
-  static String _prettyDuration(Duration duration) {
-    int minutes = duration != null ? duration.inMinutes : 0;
-    int trailingSeconds = duration != null ? (duration.inSeconds % 60) : 0;
-
-    return "$minutes:$trailingSeconds";
-  }
 }

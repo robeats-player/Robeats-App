@@ -32,9 +32,14 @@ class MediaLibrary {
     _audioPlayer = AudioPlayer();
 
     _audioPlayer.onAudioPositionChanged.listen((duration) {
-      double durationFraction = (duration.inSeconds /
-          _currentlyPlayingSong.duration.inSeconds);
-      _songDataController.durationSink.add(durationFraction);
+      double durationFraction = 0;
+
+      if (_currentlyPlayingSong.duration != null) {
+        durationFraction =
+        (duration.inSeconds / _currentlyPlayingSong.duration.inSeconds);
+      }
+
+      _songDataController.durationStreamController.add(durationFraction);
     });
 
     _audioPlayer.onPlayerCompletion.listen((event) {
@@ -49,10 +54,9 @@ class MediaLibrary {
     for (FileSystemEntity entity in entities) {
       if (entity is File) {
         Tag metaTags = await _metaTags(entity);
-
         String fileName = _getFileName(entity);
-        String songTitle = metaTags.tags['title'];
-        String artist = metaTags.tags['artist'];
+        String songTitle = metaTags?.tags['title'];
+        String artist = metaTags?.tags['artist'];
 
         _songSet.add(Song(
             fileName, songTitle, artist, null
@@ -67,7 +71,7 @@ class MediaLibrary {
 
     _audioPlayer.play(url, volume: 0.35);
     _currentlyPlayingSong = song;
-    _songDataController.songSink.add(song);
+    _songDataController.songStreamController.add(song);
 
     song.duration ??= await _audioPlayer.onDurationChanged.first;
   }
@@ -83,11 +87,24 @@ class MediaLibrary {
     playQueue();
   }
 
+  void toggleState() {
+    AudioPlayerState state = _audioPlayer.state;
+
+    switch (state) {
+      case AudioPlayerState.PLAYING:
+        _audioPlayer.pause();
+        break;
+      default: //paused.
+        _audioPlayer.resume();
+        break;
+    }
+  }
+
   void stop() {
     _audioPlayer.stop();
     _audioPlayer.release();
 
-    _songDataController.songSink.add(null);
+    _songDataController.songStreamController.add(null);
     _currentlyPlayingSong = null;
   }
 
@@ -100,8 +117,12 @@ class MediaLibrary {
   }
 
   void seekFraction(double fraction) async {
-    Duration duration = _currentlyPlayingSong.duration * fraction;
-    seekTime(duration);
+    Duration totalDuration = _currentlyPlayingSong?.duration;
+
+    if (totalDuration != null) {
+      Duration duration = totalDuration * fraction;
+      seekTime(duration);
+    }
   }
 
   void seekTime(Duration duration) {
@@ -117,10 +138,12 @@ class MediaLibrary {
   static Future<Tag> _metaTags(File file) async {
     TagProcessor tagProcessor = TagProcessor();
     List<Tag> tags = await tagProcessor.getTagsFromByteArray(
-        file.readAsBytes(),
-        [TagType.id3v1]
+      file.readAsBytes(),
     );
 
-    return tags.isNotEmpty ? tags[0] : null;
+    return tags.firstWhere(
+            (tag) => tag != null && tag.tags.isNotEmpty,
+        orElse: () => null
+    );
   }
 }

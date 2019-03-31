@@ -1,6 +1,6 @@
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/data/song_data_controller.dart';
-import 'package:Robeats/widgets/song_list_screen.dart';
+import 'package:Robeats/widgets/play_screen.dart';
 import 'package:flutter/material.dart';
 
 const String TITLE = "Robeats Player";
@@ -19,7 +19,7 @@ class RobeatsApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: "Robeats Player",
-        home: new SongListScreen(),
+        home: PlayScreen(),
         theme: RobeatsThemeData.getThemeData()
     );
   }
@@ -49,7 +49,7 @@ class RobeatsThemeData {
           bottomAppBarColor: LIGHT,
           cardColor: DARK,
           splashColor: DARK,
-          iconTheme: IconThemeData(color: LIGHT),
+          iconTheme: IconThemeData(color: PRIMARY),
           primaryIconTheme: IconThemeData(color: Colors.white),
           accentIconTheme: IconThemeData(color: ACCENT),
           backgroundColor: LIGHT,

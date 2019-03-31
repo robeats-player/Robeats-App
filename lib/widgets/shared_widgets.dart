@@ -33,7 +33,7 @@ class RobeatsDrawer extends Drawer {
             leading: Icon(Icons.book, size: 40.0,),
             title: Text("Song List"),
             onTap: () {
-              Navigator.push(buildContext, MaterialPageRoute(
+              Navigator.pushReplacement(buildContext, MaterialPageRoute(
                   builder: (buildContext) => SongListScreen()));
             },
           ),
@@ -41,7 +41,7 @@ class RobeatsDrawer extends Drawer {
             leading: Icon(Icons.playlist_play, size: 40.0,),
             title: Text("Playlists"),
             onTap: () {
-              Navigator.push(buildContext, MaterialPageRoute(
+              Navigator.pushReplacement(buildContext, MaterialPageRoute(
                   builder: (buildContext) => PlaylistScreen()));
             },
           ),
@@ -49,7 +49,7 @@ class RobeatsDrawer extends Drawer {
             leading: Icon(Icons.play_circle_filled, size: 40.0,),
             title: Text("Now Playing"),
             onTap: () {
-              Navigator.push(buildContext,
+              Navigator.pushReplacement(buildContext,
                   MaterialPageRoute(builder: (buildContext) => PlayScreen()));
             },
           ),
@@ -57,7 +57,7 @@ class RobeatsDrawer extends Drawer {
             leading: Icon(Icons.devices, size: 40.0,),
             title: Text("Network Devices"),
             onTap: () {
-              Navigator.push(buildContext, MaterialPageRoute(
+              Navigator.pushReplacement(buildContext, MaterialPageRoute(
                   builder: (buildContext) => LocalNetworkScreen()));
             },
           )
