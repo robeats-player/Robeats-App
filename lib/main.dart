@@ -34,6 +34,7 @@ class RobeatsThemeData {
   static const Color TEXT_COLOUR_INVERSE = Color.fromRGBO(255, 255, 255, 1.0);
   static ThemeData _instance;
 
+  /// Cannot be instantiated.
   RobeatsThemeData._private();
 
   static ThemeData getThemeData() {

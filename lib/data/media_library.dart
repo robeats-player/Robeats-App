@@ -23,11 +23,16 @@ class MediaLibrary {
 
   Queue<Song> get songQueue => _songQueue;
 
+  /// Get the [Directory] that music is all saved to.
+  /// Async, as path_provider dictates.
   Future<Directory> get directory async {
     Directory appDataDirectory = await getMediaDirectory();
     return Directory(appDataDirectory.path + "/" + "music");
   }
 
+  /// Initialise the [AudioPlayer] for the app, and listen to the stream
+  /// for duration changes, and send it to the sink of the [SongDataController]
+  /// to update the UI.
   void _loadAudioPlayer() {
     _audioPlayer = AudioPlayer();
 
@@ -47,6 +52,9 @@ class MediaLibrary {
     });
   }
 
+  /// (Recursively) loop through all files of the [Directory]. Any files
+  /// with type .mp3 will be loaded, tags read, [Song] objects created
+  /// and added to the [_songSet].
   void loadSongs() async {
     List<FileSystemEntity> entities = (await this.directory).listSync(
         recursive: true);
@@ -65,11 +73,19 @@ class MediaLibrary {
     }
   }
 
+  /// This loads the URL of the [Song], by getting its [Directory].
+  /// The current song, if any, is stopped, and this one is played.
+  /// Once the song is played, the [_currentlyPlayingSong] is set to it,
+  /// and added to the [SongDataController]'s sink.
+  ///
+  /// Furthermore, the [Song]'s [Duration] has now been by audioplayers and can
+  /// be set.
   void playSong(Song song) async {
     String url = await song.directory;
-    stop();
 
+    stop();
     _audioPlayer.play(url, volume: 0.35);
+
     _currentlyPlayingSong = song;
     _songDataController.songStreamController.add(song);
 
@@ -80,6 +96,7 @@ class MediaLibrary {
     //todo implement.
   }
 
+  /// Get all songs from a [Playlist] and add them to the [_songQueue].
   void playPlaylist(Playlist playlist) {
     _songQueue.clear();
     _songQueue.addAll(playlist.songs);
@@ -87,6 +104,12 @@ class MediaLibrary {
     playQueue();
   }
 
+  /// 'state' refers to the [AudioPlayer]'s current [AudioPlayerState].
+  /// This could describe a song either: Stopped, Playing, Paused, or
+  /// Completed.
+  ///
+  /// If the state is PLAYING, then this pauses the song. If the song is
+  /// PAUSED, then it must be resumed.
   void toggleState() {
     AudioPlayerState state = _audioPlayer.state;
 
@@ -94,12 +117,19 @@ class MediaLibrary {
       case AudioPlayerState.PLAYING:
         _audioPlayer.pause();
         break;
-      default: //paused.
+      case AudioPlayerState.PAUSED: //paused.
         _audioPlayer.resume();
+        break;
+      default:
         break;
     }
   }
 
+  /// This stops the song. It call's [AudioPlayer]'s pause stop method,
+  /// and releases its resources, in case that no other songs will be played.
+  ///
+  /// Furthermore, the variable [_currentlyPlayingSong] and the sink in
+  /// [SongDataController] are returned to their original state: null.
   void stop() {
     _audioPlayer.stop();
     _audioPlayer.release();
@@ -116,6 +146,11 @@ class MediaLibrary {
     //todo: implement.
   }
 
+  /// Seeks the current position in the song (i.e. the cursor) to a fraction
+  /// of the total duration.
+  /// Null checks must be done on totalDuration, as if no song is playing, or
+  /// it's not loaded - due to it being async, it will return null. If it is
+  /// null no seeking will be done.
   void seekFraction(double fraction) async {
     Duration totalDuration = _currentlyPlayingSong?.duration;
 
@@ -125,16 +160,26 @@ class MediaLibrary {
     }
   }
 
+  /// Seeks the current position in the song (i.e. the cursor) to a specific
+  /// [Duration].
+  ///
+  /// All checks for time extending the song's length are done
+  /// by audioplayers.
   void seekTime(Duration duration) {
     _audioPlayer.seek(duration);
   }
 
+  /// Utility function - returns the file name based on a [FileSystemEntity]'s path.
+  /// E.g. /a/b/c/song.mp3 would return song.mp3
   static String _getFileName(FileSystemEntity entity) {
     return entity.path
         .split('/')
         .last;
   }
 
+  /// Utility function - returns the ID3 [Tag] based on a song. Depending on
+  /// the tag type used, either is returned. This could either be ID3v1 or
+  /// ID3v2.
   static Future<Tag> _metaTags(File file) async {
     TagProcessor tagProcessor = TagProcessor();
     List<Tag> tags = await tagProcessor.getTagsFromByteArray(

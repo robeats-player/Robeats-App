@@ -16,12 +16,15 @@ class SongDataController {
 
   SongDataController();
 
+  /// Close all resources to reduce memory leaks.
   void dispose() {
     _songStreamController.close();
     _durationStreamController.close();
   }
 }
 
+/// Return the directory used by the OS (iOS or Android) that the app
+/// can save music to.
 Future<Directory> getMediaDirectory() async {
   Directory directory = await getApplicationDocumentsDirectory();
   return Directory(directory.path);

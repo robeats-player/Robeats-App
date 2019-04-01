@@ -13,6 +13,7 @@ class Song {
     this.duration = duration;
   }
 
+  /// Retrieve the directory of the song.
   Future<String> get directory async {
     String path = (await Robeats.mediaLibrary.directory).path;
     return path + "/$_fileName";
