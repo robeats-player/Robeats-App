@@ -1,3 +1,5 @@
+import 'package:Robeats/data/media_library.dart';
+import 'package:Robeats/main.dart';
 import 'package:Robeats/network/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +12,13 @@ class PlaylistScreen extends StatefulWidget {
 }
 
 class _PlaylistScreenState extends State<PlaylistScreen> {
+  MediaLibrary mediaLibrary = Robeats.mediaLibrary;
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = [ //todo: load from bloc as well.
-
-    ];
+    List<Widget> widgets = mediaLibrary.playlistSet.map((playlist) {
+      return _PlaylistGridTile(playlist);
+    }).toList();
 
     return Scaffold(
         appBar: RobeatsAppBar(),
@@ -36,12 +40,18 @@ class _PlaylistGridTile extends GridTile {
           children: <Widget>[
             Expanded(
                 flex: 6, child: LayoutBuilder(builder: (context, constraint) =>
-                Icon(Icons.playlist_play, size: constraint.biggest.height)
+                IconButton(
+                  icon: Icon(
+                      Icons.playlist_play, size: constraint.biggest.height),
+                  onPressed: () {
+                    print(playlist.songs.map((song) => song.title));
+                  },
+                )
             )),
             Expanded(flex: 4, child: Text(
               playlist.identifier,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 20.0),
+              style: TextStyle(color: Colors.white, fontSize: 10.0),
             ))
           ],
         ),

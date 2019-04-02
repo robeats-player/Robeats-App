@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  crypto: ^2.0.6
   rxdart: ^0.21.0
   dart_tags: ^0.1.1
   audioplayers: ^0.10.1
