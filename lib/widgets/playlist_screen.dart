@@ -34,27 +34,27 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
 
 class _PlaylistGridTile extends GridTile {
   _PlaylistGridTile(Playlist playlist) : super(
-      child: Card(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-                flex: 6, child: LayoutBuilder(builder: (context, constraint) =>
-                IconButton(
-                  icon: Icon(
-                      Icons.playlist_play, size: constraint.biggest.height),
-                  onPressed: () {
-                    print(playlist.songs.map((song) => song.title));
-                  },
-                )
-            )),
-            Expanded(flex: 4, child: Text(
-              playlist.identifier,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 10.0),
-            ))
-          ],
+      child: GestureDetector(
+        child: Card(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                  flex: 6,
+                  child: LayoutBuilder(builder: (context, constraint) =>
+                      Icon(Icons.playlist_play, size: constraint.biggest.height)
+                  )),
+              Expanded(flex: 4, child: Text(
+                playlist.identifier,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontSize: 15.0),
+              ))
+            ],
+          ),
         ),
+        onTap: () {
+          Robeats.mediaLibrary.playPlaylist(playlist);
+        },
       )
   );
 }

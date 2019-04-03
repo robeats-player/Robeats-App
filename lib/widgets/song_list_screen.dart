@@ -37,11 +37,25 @@ class _SongListTile extends Container {
         leading: Icon(Icons.music_note),
         title: Text("${song.title}"),
         subtitle: Text("${song.artist}"),
-        trailing: IconButton(
-            icon: Icon(Icons.play_circle_filled),
-            onPressed: () {
-              Robeats.mediaLibrary.playSong(song);
-            }
+        trailing: Container(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              IconButton(
+                  icon: Icon(Icons.queue),
+                  onPressed: () {
+                    Robeats.mediaLibrary.songQueue.add(song);
+                    print(Robeats.mediaLibrary.songQueue);
+                  }
+              ),
+              IconButton(
+                  icon: Icon(Icons.play_circle_filled),
+                  onPressed: () {
+                    Robeats.mediaLibrary.playSong(song);
+                  }
+              )
+            ],
+          ),
         )
     ),
     margin: EdgeInsets.only(top: 5.0),

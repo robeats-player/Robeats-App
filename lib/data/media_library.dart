@@ -12,10 +12,10 @@ import 'package:dart_tags/dart_tags.dart';
 class MediaLibrary {
   AudioPlayer _audioPlayer;
   Song _currentlyPlayingSong;
-  SongDataController _songDataController = Robeats.songDataController;
   Set<Song> _songSet = Set();
   Set<Playlist> _playlistSet = Set();
-  Queue _songQueue = Queue();
+  Queue<Song> _songQueue = Queue();
+  SongDataController _songDataController = Robeats.songDataController;
 
   MediaLibrary() {
     _loadAudioPlayer();
@@ -53,7 +53,11 @@ class MediaLibrary {
     });
 
     _audioPlayer.onPlayerCompletion.listen((event) {
-      stop();
+      if (_songQueue.isNotEmpty) {
+        playQueue();
+      } else {
+        stop();
+      }
     });
   }
 
@@ -124,8 +128,13 @@ class MediaLibrary {
     song.duration ??= await _audioPlayer.onDurationChanged.first;
   }
 
+  /// Play all songs in the [Queue]. The queue can be added to from the songs
+  /// list screen.
   void playQueue() {
-    //todo implement.
+    if (_songQueue.isNotEmpty) {
+      Song song = _songQueue.removeFirst();
+      playSong(song);
+    }
   }
 
   /// Get all songs from a [Playlist] and add them to the [_songQueue].
@@ -149,10 +158,13 @@ class MediaLibrary {
       case AudioPlayerState.PLAYING:
         _audioPlayer.pause();
         break;
-      case AudioPlayerState.PAUSED: //paused.
+      case AudioPlayerState.PAUSED:
         _audioPlayer.resume();
         break;
       default:
+        if (_songQueue.isNotEmpty)
+          playQueue();
+
         break;
     }
   }
