@@ -1,4 +1,5 @@
 import 'package:Robeats/data/media_library.dart';
+import 'package:Robeats/data/media_loader.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/network/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
@@ -12,11 +13,11 @@ class PlaylistScreen extends StatefulWidget {
 }
 
 class _PlaylistScreenState extends State<PlaylistScreen> {
-  MediaLibrary mediaLibrary = Robeats.mediaLibrary;
+  MediaLoader mediaLoader = MediaLibrary.mediaLoader;
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = mediaLibrary.playlistSet.map((playlist) {
+    List<Widget> widgets = mediaLoader.playlistSet.map((playlist) {
       return _PlaylistGridTile(playlist);
     }).toList();
 

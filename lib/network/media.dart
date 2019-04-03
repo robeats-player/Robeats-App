@@ -1,4 +1,4 @@
-import 'package:Robeats/main.dart';
+import 'package:Robeats/data/media_loader.dart';
 
 class Song {
   String _fileName;
@@ -18,7 +18,7 @@ class Song {
 
   /// Retrieve the directory of the song.
   Future<String> get directory async {
-    String path = (await Robeats.mediaLibrary.directory).path;
+    String path = (await MediaLoader.directory).path;
     return path + "/$_fileName";
   }
 }
