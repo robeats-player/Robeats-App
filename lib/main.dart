@@ -11,7 +11,7 @@ void main() {
 
 class Robeats {
   static MediaLibrary mediaLibrary = MediaLibrary();
-  static SongDataController songDataController = SongDataController();
+  static SongStateDataController songDataController = SongStateDataController();
 }
 
 class RobeatsApp extends StatelessWidget {

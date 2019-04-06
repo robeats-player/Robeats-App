@@ -5,6 +5,7 @@ import 'package:Robeats/data/media_loader.dart';
 import 'package:Robeats/data/song_data_controller.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/network/media.dart';
+import 'package:Robeats/structures/stack.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class MediaLibrary {
@@ -13,7 +14,8 @@ class MediaLibrary {
   AudioPlayer _audioPlayer = AudioPlayer();
   Song _currentlyPlayingSong;
   Queue<Song> _songQueue = Queue();
-  SongDataController _songDataController = Robeats.songDataController;
+  Stack<Song> _songStack = Stack();
+  SongStateDataController _songDataController = Robeats.songDataController;
 
   MediaLibrary() {
     _initialiseAudioEvents();
@@ -24,7 +26,7 @@ class MediaLibrary {
   Queue<Song> get songQueue => _songQueue;
 
   /// Listens to the stream for duration changes, and send it to the sink of
-  /// the [SongDataController] to update the UI.
+  /// the [SongStateDataController] to update the UI.
   void _initialiseAudioEvents() {
     _audioPlayer.onAudioPositionChanged.listen((duration) {
       double durationFraction = 0;
@@ -44,21 +46,31 @@ class MediaLibrary {
         stop();
       }
     });
+
+    _audioPlayer.onPlayerStateChanged.listen((state) {
+      _songDataController.stateStreamController.add(state);
+    });
   }
 
   /// This loads the URL of the [Song], by getting its [Directory].
-  /// The current song, if any, is stopped, and this one is played.
   /// Once the song is played, the [_currentlyPlayingSong] is set to it,
-  /// and added to the [SongDataController]'s sink.
+  /// and added to the [SongStateDataController]'s sink.
+  ///
+  /// The song is added to the stack, so when the previous button is pressed,
+  /// the top of the stack can simply be popped. The optional parameter stack
+  /// describes whether it should be pushed or not - the notable case where
+  /// it wouldn't, is where we are playing the previous song; to avoid a loop.
   ///
   /// Furthermore, the [Song]'s [Duration] has now been by audioplayers and can
   /// be set.
-  void playSong(Song song) async {
+  void playSong(Song song, [bool stack = true]) async {
     String url = await song.directory;
 
-    stop();
-    _audioPlayer.play(url, volume: 0.35);
+    if (stack && _currentlyPlayingSong != null) {
+      _songStack.push(_currentlyPlayingSong);
+    }
 
+    _audioPlayer.play(url, volume: 0.35);
     _currentlyPlayingSong = song;
     _songDataController.songStreamController.add(song);
 
@@ -111,7 +123,7 @@ class MediaLibrary {
   /// and releases its resources, in case that no other songs will be played.
   ///
   /// Furthermore, the variable [_currentlyPlayingSong] and the sink in
-  /// [SongDataController] are returned to their original state: null.
+  /// [SongStateDataController] are returned to their original state: null.
   void stop() {
     _audioPlayer.stop();
     _audioPlayer.release();
@@ -127,6 +139,15 @@ class MediaLibrary {
 
   void loop(Song song) {
     //todo: implement.
+  }
+
+  /// Pop the last element from the stack, and if it's not null, play it.
+  void playPrevious() {
+    Song song = _songStack.pop();
+
+    if (song != null) {
+      playSong(song, false);
+    }
   }
 
   /// Seeks the current position in the song (i.e. the cursor) to a fraction

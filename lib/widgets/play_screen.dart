@@ -3,6 +3,7 @@ import 'package:Robeats/data/song_data_controller.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/network/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
 class PlayScreen extends StatefulWidget {
@@ -38,11 +39,18 @@ class _MediaControls extends Container {
           IconButton(
             iconSize: 60.0,
             icon: Icon(Icons.skip_previous),
-            onPressed: null,
+            onPressed: () {
+              Robeats.mediaLibrary.playPrevious();
+            },
           ),
           IconButton(
             iconSize: 60.0,
-            icon: Icon(Icons.pause_circle_filled),
+            icon: StreamBuilder(
+              stream: Robeats.songDataController.stateStreamController,
+              builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
+                return Icon(_chooseIcon(snapshot));
+              },
+            ),
             onPressed: () {
               Robeats.mediaLibrary.toggleState();
             },
@@ -56,6 +64,14 @@ class _MediaControls extends Container {
       ),
       color: RobeatsThemeData.LIGHT
   );
+
+  static IconData _chooseIcon(AsyncSnapshot<AudioPlayerState> snapshot) {
+    IconData data;
+    bool playing = snapshot?.data == AudioPlayerState.PLAYING;
+
+    data = playing ? Icons.pause_circle_filled : Icons.play_circle_filled;
+    return data;
+  }
 }
 
 class _MediaDisplay extends StatefulWidget {
@@ -67,7 +83,7 @@ class _MediaDisplay extends StatefulWidget {
 }
 
 class _MediaDisplayState extends State<_MediaDisplay> {
-  final SongDataController songDataController = Robeats.songDataController;
+  final SongStateDataController songDataController = Robeats.songDataController;
   final MediaLibrary mediaLibrary = Robeats.mediaLibrary;
 
   @override
@@ -96,10 +112,10 @@ class _MediaDisplayState extends State<_MediaDisplay> {
                   flex: 1,
                   child: StreamBuilder(
                     stream: songDataController.durationStreamController,
-                    builder: (BuildContext buildContext,
-                        AsyncSnapshot<double> snapshot) {
+                    builder: (_, AsyncSnapshot<double> snapshot) {
+                      double value = snapshot.data != null ? snapshot.data : 0;
                       return Slider(
-                        value: snapshot.data != null ? snapshot.data : 0,
+                        value: value,
                         onChanged: (value) {
                           mediaLibrary.seekFraction(value);
                         },
@@ -115,7 +131,7 @@ class _MediaDisplayState extends State<_MediaDisplay> {
           children: <Widget>[
             StreamBuilder(
               stream: songDataController.songStreamController,
-              builder: (BuildContext context, AsyncSnapshot<Song> snapshot) {
+              builder: (_, AsyncSnapshot<Song> snapshot) {
                 String text;
 
                 if (snapshot.data == null) {
