@@ -1,5 +1,5 @@
 import 'package:Robeats/data/media_library.dart';
-import 'package:Robeats/data/song_data_controller.dart';
+import 'package:Robeats/data/streams/song_data_controller.dart';
 import 'package:Robeats/widgets/play_screen.dart';
 import 'package:flutter/material.dart';
 

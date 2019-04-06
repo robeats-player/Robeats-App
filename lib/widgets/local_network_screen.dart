@@ -1,4 +1,4 @@
-import 'package:Robeats/network/device.dart';
+import 'package:Robeats/structures/device.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 

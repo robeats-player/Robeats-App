@@ -1,7 +1,7 @@
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/data/media_loader.dart';
 import 'package:Robeats/main.dart';
-import 'package:Robeats/network/media.dart';
+import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 

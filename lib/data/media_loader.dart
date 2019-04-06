@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Robeats/data/song_data_controller.dart';
-import 'package:Robeats/network/media.dart';
+import 'package:Robeats/data/streams/song_data_controller.dart';
+import 'package:Robeats/structures/media.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dart_tags/dart_tags.dart';
 

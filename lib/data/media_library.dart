@@ -2,9 +2,9 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:Robeats/data/media_loader.dart';
-import 'package:Robeats/data/song_data_controller.dart';
+import 'package:Robeats/data/streams/song_data_controller.dart';
 import 'package:Robeats/main.dart';
-import 'package:Robeats/network/media.dart';
+import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/structures/stack.dart';
 import 'package:audioplayers/audioplayers.dart';
 
