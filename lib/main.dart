@@ -1,5 +1,4 @@
 import 'package:Robeats/data/media_library.dart';
-import 'package:Robeats/data/streams/song_data_controller.dart';
 import 'package:Robeats/widgets/play_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +10,6 @@ void main() {
 
 class Robeats {
   static MediaLibrary mediaLibrary = MediaLibrary();
-  static SongStateDataController songDataController = SongStateDataController();
 }
 
 class RobeatsApp extends StatelessWidget {
@@ -20,8 +18,7 @@ class RobeatsApp extends StatelessWidget {
     return MaterialApp(
         title: "Robeats Player",
         home: PlayScreen(),
-        theme: RobeatsThemeData.getThemeData()
-    );
+        theme: RobeatsThemeData.getThemeData());
   }
 }
 
@@ -58,9 +55,7 @@ class RobeatsThemeData {
               primaryColor: LIGHT,
               primaryColorDark: DARK,
               primaryColorLight: LIGHT,
-              valueIndicatorTextStyle: TextStyle(color: Colors.white)
-          )
-      );
+              valueIndicatorTextStyle: TextStyle(color: Colors.white)));
     }
 
     return _instance;

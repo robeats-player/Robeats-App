@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:Robeats/data/streams/song_data_controller.dart';
 import 'package:Robeats/structures/media.dart';
@@ -17,6 +18,10 @@ class MediaLoader {
   Set<Song> get songSet => _songSet;
 
   Set<Playlist> get playlistSet => _playlistSet;
+
+  Song get randomSong {
+    return _songSet.elementAt(new Random().nextInt(_songSet.length));
+  }
 
   /// Get the [Directory] that music is all saved to.
   /// Async, as path_provider dictates.

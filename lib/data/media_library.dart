@@ -2,20 +2,24 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:Robeats/data/media_loader.dart';
+import 'package:Robeats/data/streams/queue_data_controller.dart';
 import 'package:Robeats/data/streams/song_data_controller.dart';
-import 'package:Robeats/main.dart';
+import 'package:Robeats/structures/data_structures/stack.dart';
+import 'package:Robeats/structures/data_structures/stream_queue.dart';
 import 'package:Robeats/structures/media.dart';
-import 'package:Robeats/structures/stack.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class MediaLibrary {
   static final MediaLoader _mediaLoader = MediaLoader();
 
+  static SongStateDataController songDataController = SongStateDataController();
+  static QueueDataController queueDataController = QueueDataController();
+
   AudioPlayer _audioPlayer = AudioPlayer();
   Song _currentlyPlayingSong;
-  Queue<Song> _songQueue = Queue();
   Stack<Song> _songStack = Stack();
-  SongStateDataController _songDataController = Robeats.songDataController;
+  StreamQueue<Song> _songQueue = StreamQueue(
+      queueDataController.queueStreamController);
 
   MediaLibrary() {
     _initialiseAudioEvents();
@@ -23,7 +27,7 @@ class MediaLibrary {
 
   static MediaLoader get mediaLoader => _mediaLoader;
 
-  Queue<Song> get songQueue => _songQueue;
+  StreamQueue<Song> get songQueue => _songQueue;
 
   /// Listens to the stream for duration changes, and send it to the sink of
   /// the [SongStateDataController] to update the UI.
@@ -36,7 +40,7 @@ class MediaLibrary {
         (duration.inSeconds / _currentlyPlayingSong.duration.inSeconds);
       }
 
-      _songDataController.durationStreamController.add(durationFraction);
+      songDataController.durationStreamController.add(durationFraction);
     });
 
     _audioPlayer.onPlayerCompletion.listen((event) {
@@ -48,7 +52,7 @@ class MediaLibrary {
     });
 
     _audioPlayer.onPlayerStateChanged.listen((state) {
-      _songDataController.stateStreamController.add(state);
+      songDataController.stateStreamController.add(state);
     });
   }
 
@@ -72,7 +76,7 @@ class MediaLibrary {
 
     _audioPlayer.play(url, volume: 0.35);
     _currentlyPlayingSong = song;
-    _songDataController.songStreamController.add(song);
+    songDataController.songStreamController.add(song);
 
     song.duration ??= await _audioPlayer.onDurationChanged.first;
   }
@@ -128,17 +132,9 @@ class MediaLibrary {
     _audioPlayer.stop();
     _audioPlayer.release();
 
-    _songDataController.songStreamController.add(null);
-    _songDataController.durationStreamController.add(0);
+    songDataController.songStreamController.add(null);
+    songDataController.durationStreamController.add(0);
     _currentlyPlayingSong = null;
-  }
-
-  void shuffle() {
-    //todo: implement.
-  }
-
-  void loop(Song song) {
-    //todo: implement.
   }
 
   /// Pop the last element from the stack, and if it's not null, play it.
@@ -148,6 +144,19 @@ class MediaLibrary {
     if (song != null) {
       playSong(song, false);
     }
+  }
+
+  /// If the [Queue] is not empty, play the next song. If it is empty, play
+  /// a random song - as songs are not stored in a [Set] and therefore, not
+  /// any particular order.
+  void playNext() {
+    if (_songQueue.isNotEmpty) {
+      playQueue();
+      return;
+    }
+
+    Song song = _mediaLoader.randomSong;
+    playSong(song);
   }
 
   /// Seeks the current position in the song (i.e. the cursor) to a fraction

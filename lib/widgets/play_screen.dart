@@ -24,46 +24,49 @@ class _PlayScreenState extends State<PlayScreen> {
             Expanded(child: _MediaDisplay(), flex: 17),
             Expanded(child: _MediaControls(), flex: 3)
           ],
-        )
-    );
+        ));
   }
 }
 
 class _MediaControls extends Container {
   // backward, play/pause, forward.
+  static var _mediaLibrary = Robeats.mediaLibrary;
+  static var _songStateDataController = MediaLibrary.songDataController;
 
   _MediaControls() : super(
-      child: Row( // outer row.
+      child: Row(
+        // outer row.
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           IconButton(
             iconSize: 60.0,
             icon: Icon(Icons.skip_previous),
             onPressed: () {
-              Robeats.mediaLibrary.playPrevious();
+              _mediaLibrary.playPrevious();
             },
           ),
           IconButton(
             iconSize: 60.0,
             icon: StreamBuilder(
-              stream: Robeats.songDataController.stateStreamController,
+              stream: _songStateDataController.stateStreamController,
               builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
                 return Icon(_chooseIcon(snapshot));
               },
             ),
             onPressed: () {
-              Robeats.mediaLibrary.toggleState();
+              _mediaLibrary.toggleState();
             },
           ),
           IconButton(
             iconSize: 60.0,
             icon: Icon(Icons.skip_next),
-            onPressed: null,
+            onPressed: () {
+              _mediaLibrary.playNext();
+            },
           )
         ],
       ),
-      color: RobeatsThemeData.LIGHT
-  );
+      color: RobeatsThemeData.LIGHT);
 
   static IconData _chooseIcon(AsyncSnapshot<AudioPlayerState> snapshot) {
     IconData data;
@@ -83,8 +86,9 @@ class _MediaDisplay extends StatefulWidget {
 }
 
 class _MediaDisplayState extends State<_MediaDisplay> {
-  final SongStateDataController songDataController = Robeats.songDataController;
   final MediaLibrary mediaLibrary = Robeats.mediaLibrary;
+  final SongStateDataController songDataController = MediaLibrary
+      .songDataController;
 
   @override
   Widget build(BuildContext context) {
@@ -121,8 +125,7 @@ class _MediaDisplayState extends State<_MediaDisplay> {
                         },
                       );
                     },
-                  )
-              ),
+                  )),
             )
           ],
         ),
