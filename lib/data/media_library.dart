@@ -10,22 +10,22 @@ import 'package:Robeats/structures/media.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class MediaLibrary {
-  static final MediaLoader _mediaLoader = MediaLoader();
+  final MediaLoader _mediaLoader = MediaLoader();
 
-  static SongStateDataController songDataController = SongStateDataController();
-  static QueueDataController queueDataController = QueueDataController();
-
+  SongStateDataController songDataController = SongStateDataController();
+  QueueDataController queueDataController = QueueDataController();
   AudioPlayer _audioPlayer = AudioPlayer();
   Song _currentlyPlayingSong;
   Stack<Song> _songStack = Stack();
-  StreamQueue<Song> _songQueue = StreamQueue(
-      queueDataController.queueStreamController);
+  StreamQueue<Song> _songQueue;
 
   MediaLibrary() {
+    _songQueue = StreamQueue(queueDataController.queueStreamController);
+
     _initialiseAudioEvents();
   }
 
-  static MediaLoader get mediaLoader => _mediaLoader;
+  MediaLoader get mediaLoader => _mediaLoader;
 
   StreamQueue<Song> get songQueue => _songQueue;
 

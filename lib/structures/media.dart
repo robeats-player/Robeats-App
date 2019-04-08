@@ -21,6 +21,18 @@ class Song {
     String path = (await MediaLoader.directory).path;
     return path + "/$_fileName";
   }
+
+  /// Override of the equals operator. This works by checking that the hash
+  /// of the song's mp3 file is equal.
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Song &&
+              runtimeType == other.runtimeType &&
+              hash == other.hash;
+
+  @override
+  int get hashCode => hash.hashCode;
 }
 
 class Playlist {
@@ -28,4 +40,20 @@ class Playlist {
   List<Song> songs;
 
   Playlist(this.identifier, this.songs);
+
+  /// Override of the equals operator. This works by checking the identifier
+  /// (name) of the playlist, and the data structure holding all its [Song]s.
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is Playlist &&
+            runtimeType == other.runtimeType &&
+            identifier == other.identifier &&
+            songs == other.songs;
+  }
+
+  @override
+  int get hashCode {
+    return identifier.hashCode ^ songs.hashCode;
+  }
 }

@@ -2,14 +2,7 @@ import 'package:Robeats/structures/device.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 
-class LocalNetworkScreen extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _LocalNetworkState();
-  }
-}
-
-class _LocalNetworkState extends State<LocalNetworkScreen> {
+class LocalNetworkScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

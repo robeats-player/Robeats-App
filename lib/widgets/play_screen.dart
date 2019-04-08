@@ -1,19 +1,10 @@
-import 'package:Robeats/data/media_library.dart';
-import 'package:Robeats/data/streams/song_data_controller.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
-class PlayScreen extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _PlayScreenState();
-  }
-}
-
-class _PlayScreenState extends State<PlayScreen> {
+class PlayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,13 +20,11 @@ class _PlayScreenState extends State<PlayScreen> {
 }
 
 class _MediaControls extends Container {
-  // backward, play/pause, forward.
   static var _mediaLibrary = Robeats.mediaLibrary;
-  static var _songStateDataController = MediaLibrary.songDataController;
+  static var _songDataController = _mediaLibrary.songDataController;
 
   _MediaControls() : super(
       child: Row(
-        // outer row.
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           IconButton(
@@ -48,7 +37,7 @@ class _MediaControls extends Container {
           IconButton(
             iconSize: 60.0,
             icon: StreamBuilder(
-              stream: _songStateDataController.stateStreamController,
+              stream: _songDataController.stateStreamController,
               builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
                 return Icon(_chooseIcon(snapshot));
               },
@@ -77,18 +66,13 @@ class _MediaControls extends Container {
   }
 }
 
-class _MediaDisplay extends StatefulWidget {
-  // song name, slider, etc...
-  @override
-  State<StatefulWidget> createState() {
-    return _MediaDisplayState();
-  }
-}
+class _MediaDisplay extends StatelessWidget {
+  var _mediaLibrary = Robeats.mediaLibrary;
+  var _songDataController;
 
-class _MediaDisplayState extends State<_MediaDisplay> {
-  final MediaLibrary mediaLibrary = Robeats.mediaLibrary;
-  final SongStateDataController songDataController = MediaLibrary
-      .songDataController;
+  _MediaDisplay() {
+    _songDataController = _mediaLibrary.songDataController;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,17 +99,18 @@ class _MediaDisplayState extends State<_MediaDisplay> {
               child: Flexible(
                   flex: 1,
                   child: StreamBuilder(
-                    stream: songDataController.durationStreamController,
+                    stream: _songDataController.durationStreamController,
                     builder: (_, AsyncSnapshot<double> snapshot) {
                       double value = snapshot.data != null ? snapshot.data : 0;
                       return Slider(
                         value: value,
                         onChanged: (value) {
-                          mediaLibrary.seekFraction(value);
+                          _mediaLibrary.seekFraction(value);
                         },
                       );
                     },
-                  )),
+                  )
+              ),
             )
           ],
         ),
@@ -133,22 +118,10 @@ class _MediaDisplayState extends State<_MediaDisplay> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             StreamBuilder(
-              stream: songDataController.songStreamController,
+              stream: _songDataController.songStreamController,
               builder: (_, AsyncSnapshot<Song> snapshot) {
-                String text;
-
-                if (snapshot.data == null) {
-                  text = "Choose a song!";
-                } else {
-                  String songName = snapshot.data?.title;
-                  String artistName = snapshot.data?.artist;
-
-                  text = "${(artistName ??= "Unreadable")} - ${(
-                      songName ??= "Unreadable")}";
-                }
-
                 return Text(
-                  text,
+                  _songTitleArtist(snapshot.data),
                   style: TextStyle(color: Colors.white),
                 );
               },
@@ -157,5 +130,21 @@ class _MediaDisplayState extends State<_MediaDisplay> {
         ),
       ],
     );
+  }
+
+  static String _songTitleArtist(Song song) {
+    String text;
+
+    if (song == null) {
+      text = "Choose a song!";
+    } else {
+      String songName = song.title;
+      String artistName = song.artist;
+
+      text = "${(artistName ??= "Unreadable")} - ${(
+          songName ??= "Unreadable")}";
+    }
+
+    return text;
   }
 }

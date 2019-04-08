@@ -1,43 +1,55 @@
-import 'package:Robeats/data/media_library.dart';
-import 'package:Robeats/data/media_loader.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 
 class SongListScreen extends StatelessWidget {
-  final MediaLoader mediaLoader = MediaLibrary.mediaLoader;
+  var _mediaLibrary = Robeats.mediaLibrary;
+  var _mediaLoader;
+
+  SongListScreen() {
+    _mediaLoader = _mediaLibrary.mediaLoader;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: RobeatsAppBar(),
-      drawer: RobeatsDrawer(context),
-      body: ListView(
-        padding: EdgeInsets.only(top: 5.0),
-        children: _SongListTile.prepareTiles(mediaLoader.songSet),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.queue_music, color: RobeatsThemeData.PRIMARY),
-        onPressed: () {
-          showModalBottomSheet(
-              context: context,
-              builder: (_) => _QueueBottomSheet()
+    return StreamBuilder<Object>(
+        stream: _mediaLibrary.songDataController.songStreamController,
+        builder: (_, s) {
+          return Scaffold(
+            appBar: RobeatsAppBar(),
+            drawer: RobeatsDrawer(context),
+            body: ListView(
+              padding: EdgeInsets.only(top: 5.0),
+              children: _SongListTile.prepareTiles(
+                  _mediaLoader.songSet, s.data),
+            ),
+            floatingActionButton: FloatingActionButton(
+              child: Icon(Icons.queue_music, color: RobeatsThemeData.PRIMARY),
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (_) => _QueueBottomSheet()
+                );
+              },
+            ),
           );
-        },
-      ),
+        }
     );
   }
 }
 
 class _QueueBottomSheet extends Container {
+  static var _mediaLibrary = Robeats.mediaLibrary;
+  static var _mediaLoader = _mediaLibrary.mediaLoader;
+
   _QueueBottomSheet() : super(
       child: StreamBuilder<Object>(
-          stream: MediaLibrary.queueDataController.queueStreamController,
-          builder: (_, snapshot) {
+          stream: _mediaLibrary.songDataController.songStreamController,
+          builder: (_, s) {
             return ListView(
-              padding: EdgeInsets.only(top: 5.0),
-              children: _QueueTile.prepareTiles(snapshot?.data),
+                padding: EdgeInsets.only(top: 5.0),
+                children: _QueueTile.prepareTiles(_mediaLoader.songSet, s.data)
             );
           }
       )
@@ -45,7 +57,9 @@ class _QueueBottomSheet extends Container {
 }
 
 class _SongListTile extends Container {
-  _SongListTile(Song song) : super(
+  static var _mediaLibrary = Robeats.mediaLibrary;
+
+  _SongListTile(Song song, bool current) : super(
     child: ListTile(
         leading: Icon(Icons.music_note),
         title: Text("${song.title}"),
@@ -57,13 +71,13 @@ class _SongListTile extends Container {
               IconButton(
                   icon: Icon(Icons.queue),
                   onPressed: () {
-                    Robeats.mediaLibrary.songQueue.add(song);
+                    _mediaLibrary.songQueue.add(song);
                   }
               ),
               IconButton(
                   icon: Icon(Icons.play_circle_filled),
                   onPressed: () {
-                    Robeats.mediaLibrary.playSong(song);
+                    _mediaLibrary.playSong(song);
                   }
               )
             ],
@@ -74,16 +88,16 @@ class _SongListTile extends Container {
     decoration: BoxDecoration(
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.white,
+            color: current ? Colors.white : Colors.grey,
             spreadRadius: 1.5,
           )
         ]
     ),
   );
 
-  static List<_SongListTile> prepareTiles(Iterable<Song> iterable) {
-    if (iterable != null) {
-      return iterable.map((song) => _SongListTile(song)).toList();
+  static List<_SongListTile> prepareTiles(Iterable<Song> iter, Song current) {
+    if (iter != null) {
+      return iter.map((song) => _SongListTile(song, current == song)).toList();
     } else {
       return List();
     }
@@ -91,9 +105,10 @@ class _SongListTile extends Container {
 }
 
 class _QueueTile extends Container {
+  static var _mediaLibrary = Robeats.mediaLibrary;
   static int _index = 0;
 
-  _QueueTile(Song song) : super(
+  _QueueTile(Song song, bool current) : super(
     child: ListTile(
         leading: Icon(Icons.queue_music),
         title: Text("#${++_index} - ${song.title}"),
@@ -105,7 +120,7 @@ class _QueueTile extends Container {
               IconButton(
                   icon: Icon(Icons.play_circle_filled),
                   onPressed: () {
-                    Robeats.mediaLibrary.playSong(song);
+                    _mediaLibrary.playSong(song);
                   }
               )
             ],
@@ -116,18 +131,18 @@ class _QueueTile extends Container {
     decoration: BoxDecoration(
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.white,
+            color: current ? Colors.white : Colors.grey,
             spreadRadius: 1.5,
           )
         ]
     ),
   );
 
-  static List<_QueueTile> prepareTiles(Iterable<Song> iterable) {
+  static List<_QueueTile> prepareTiles(Iterable<Song> iterable, Song current) {
     _index = 0;
 
     if (iterable != null) {
-      return iterable?.map((song) => _QueueTile(song))?.toList();
+      return iterable.map((song) => _QueueTile(song, song == current)).toList();
     } else {
       return [];
     }

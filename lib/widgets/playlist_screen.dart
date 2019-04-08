@@ -1,23 +1,19 @@
-import 'package:Robeats/data/media_library.dart';
-import 'package:Robeats/data/media_loader.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 
-class PlaylistScreen extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _PlaylistScreenState();
-  }
-}
+class PlaylistScreen extends StatelessWidget {
+  var _mediaLibrary = Robeats.mediaLibrary;
+  var _mediaLoader;
 
-class _PlaylistScreenState extends State<PlaylistScreen> {
-  MediaLoader mediaLoader = MediaLibrary.mediaLoader;
+  PlaylistScreen() {
+    _mediaLoader = _mediaLibrary.mediaLoader;
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = mediaLoader.playlistSet.map((playlist) {
+    List<Widget> widgets = _mediaLoader.playlistSet.map((playlist) {
       return _PlaylistGridTile(playlist);
     }).toList();
 
@@ -34,6 +30,8 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
 }
 
 class _PlaylistGridTile extends GridTile {
+  static var _mediaLibrary = Robeats.mediaLibrary;
+
   _PlaylistGridTile(Playlist playlist) : super(
       child: GestureDetector(
         child: Card(
@@ -54,7 +52,7 @@ class _PlaylistGridTile extends GridTile {
           ),
         ),
         onTap: () {
-          Robeats.mediaLibrary.playPlaylist(playlist);
+          _mediaLibrary.playPlaylist(playlist);
         },
       )
   );
