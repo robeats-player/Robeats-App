@@ -1,19 +1,15 @@
-import 'package:Robeats/main.dart';
+import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 
 class PlaylistScreen extends StatelessWidget {
-  var _mediaLibrary = Robeats.mediaLibrary;
-  var _mediaLoader;
-
-  PlaylistScreen() {
-    _mediaLoader = _mediaLibrary.mediaLoader;
-  }
+  final MediaLibrary _mediaLibrary = MediaLibrary();
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = _mediaLoader.playlistSet.map((playlist) {
+    List<Widget> widgets = _mediaLibrary.mediaLoader.playlistSet.map((
+        playlist) {
       return _PlaylistGridTile(playlist);
     }).toList();
 
@@ -30,8 +26,6 @@ class PlaylistScreen extends StatelessWidget {
 }
 
 class _PlaylistGridTile extends GridTile {
-  static var _mediaLibrary = Robeats.mediaLibrary;
-
   _PlaylistGridTile(Playlist playlist) : super(
       child: GestureDetector(
         child: Card(
@@ -40,19 +34,25 @@ class _PlaylistGridTile extends GridTile {
             children: <Widget>[
               Expanded(
                   flex: 6,
-                  child: LayoutBuilder(builder: (context, constraint) =>
-                      Icon(Icons.playlist_play, size: constraint.biggest.height)
-                  )),
-              Expanded(flex: 4, child: Text(
-                playlist.identifier,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white, fontSize: 15.0),
-              ))
+                  child: LayoutBuilder(
+                      builder: (context, constraint) =>
+                          Icon(Icons.playlist_play,
+                              size: constraint.biggest.height)
+                  )
+              ),
+              Expanded(
+                  flex: 4,
+                  child: Text(
+                    playlist.identifier,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 15.0),
+                  )
+              )
             ],
           ),
         ),
         onTap: () {
-          _mediaLibrary.playPlaylist(playlist);
+          MediaLibrary().playPlaylist(playlist);
         },
       )
   );

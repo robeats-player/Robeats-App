@@ -1,4 +1,6 @@
+import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/main.dart';
+import 'package:Robeats/structures/data_structures/stream_queue.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -12,139 +14,164 @@ class PlayScreen extends StatelessWidget {
         drawer: RobeatsDrawer(context),
         body: Column(
           children: <Widget>[
-            Expanded(child: _MediaDisplay(), flex: 17),
-            Expanded(child: _MediaControls(), flex: 3)
+            Expanded(flex: 80, child: _MediaDisplay()),
+            Expanded(flex: 45, child: _MediaControls()),
+            Expanded(flex: 75, child: _NextQueueSong())
           ],
-        ));
-  }
-}
-
-class _MediaControls extends Container {
-  static var _mediaLibrary = Robeats.mediaLibrary;
-  static var _songDataController = _mediaLibrary.songDataController;
-
-  _MediaControls() : super(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          IconButton(
-            iconSize: 60.0,
-            icon: Icon(Icons.skip_previous),
-            onPressed: () {
-              _mediaLibrary.playPrevious();
-            },
-          ),
-          IconButton(
-            iconSize: 60.0,
-            icon: StreamBuilder(
-              stream: _songDataController.stateStreamController,
-              builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
-                return Icon(_chooseIcon(snapshot));
-              },
-            ),
-            onPressed: () {
-              _mediaLibrary.toggleState();
-            },
-          ),
-          IconButton(
-            iconSize: 60.0,
-            icon: Icon(Icons.skip_next),
-            onPressed: () {
-              _mediaLibrary.playNext();
-            },
-          )
-        ],
-      ),
-      color: RobeatsThemeData.LIGHT);
-
-  static IconData _chooseIcon(AsyncSnapshot<AudioPlayerState> snapshot) {
-    IconData data;
-    bool playing = snapshot?.data == AudioPlayerState.PLAYING;
-
-    data = playing ? Icons.pause_circle_filled : Icons.play_circle_filled;
-    return data;
+        )
+    );
   }
 }
 
 class _MediaDisplay extends StatelessWidget {
-  var _mediaLibrary = Robeats.mediaLibrary;
-  var _songDataController;
+  final MediaLibrary _mediaLibrary = MediaLibrary();
 
-  _MediaDisplay() {
-    _songDataController = _mediaLibrary.songDataController;
+  @override
+  Widget build(BuildContext context) {
+    MediaQueryData data = MediaQuery.of(context);
+    TextStyle songStyle = TextStyle(color: Colors.white, fontSize: 25.0);
+    TextStyle artistStyle = TextStyle(color: Colors.white, fontSize: 15.0);
+
+    return Container(
+        width: data.size.width * 0.85,
+        height: data.size.height * 0.85,
+        child: StreamBuilder(
+            stream: _mediaLibrary.songDataController.songStreamController,
+            builder: (_, AsyncSnapshot<Song> snapshot) {
+              String title = snapshot.data?.title;
+              String artist = snapshot.data?.artist;
+              artist ??= "";
+
+              return Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 25.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text("${title ??= "Choose a song!"}", style: songStyle),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text("$artist", style: artistStyle),
+                    ],
+                  )
+                ],
+              );
+            }
+        ),
+        decoration: ShapeDecoration(
+            shape: SemiCircleBorder(context),
+            color: RobeatsThemeData.LIGHT,
+            shadows: <BoxShadow>[
+              BoxShadow(
+                  color: RobeatsThemeData.DARK,
+                  blurRadius: 5,
+                  spreadRadius: 1
+              )
+            ]
+        )
+    );
   }
+}
+
+class _MediaControls extends StatelessWidget {
+  final MediaLibrary _mediaLibrary = MediaLibrary();
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(bottom: 30.0),
-          child: Row( // this is the image/icon in the square.
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                child: Image.asset(
-                    "assets/compact-disc-image-transparent.png", width: 200,
-                    height: 200),
-                //todo: placeholder for album cover.
-              )
-            ],
-          ),
-        ),
-        Row( // slider value.
+        Row(
           children: <Widget>[
-            Container(
-              child: Flexible(
-                  flex: 1,
-                  child: StreamBuilder(
-                    stream: _songDataController.durationStreamController,
-                    builder: (_, AsyncSnapshot<double> snapshot) {
-                      double value = snapshot.data != null ? snapshot.data : 0;
-                      return Slider(
-                        value: value,
-                        onChanged: (value) {
-                          _mediaLibrary.seekFraction(value);
-                        },
-                      );
-                    },
-                  )
-              ),
+            Flexible(
+                flex: 1,
+                child: StreamBuilder(
+                  stream: _mediaLibrary.songDataController
+                      .durationStreamController,
+                  builder: (_, AsyncSnapshot<double> snapshot) {
+                    double value = snapshot?.data;
+
+                    return Slider(
+                      value: (value ??= 0),
+                      onChanged: (value) => _mediaLibrary.seekFraction(value),
+                    );
+                  },
+                )
             )
           ],
         ),
-        Row( // currently playing song.
+        Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            IconButton(
+              iconSize: 40.0,
+              icon: Icon(Icons.skip_previous, color: Colors.white),
+              onPressed: () => _mediaLibrary.playPrevious(),
+            ),
             StreamBuilder(
-              stream: _songDataController.songStreamController,
-              builder: (_, AsyncSnapshot<Song> snapshot) {
-                return Text(
-                  _songTitleArtist(snapshot.data),
-                  style: TextStyle(color: Colors.white),
-                );
-              },
-            )
+                stream: _mediaLibrary.songDataController.stateStreamController,
+                builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
+                  return IconButton(
+                    iconSize: 60.0,
+                    icon: Icon(_chooseIcon(snapshot.data), color: Colors.white),
+                    onPressed: () => _mediaLibrary.toggleState(),
+                  );
+                }
+            ),
+            IconButton(
+              iconSize: 40.0,
+              icon: Icon(Icons.skip_next, color: Colors.white),
+              onPressed: () => _mediaLibrary.playNext(),
+            ),
           ],
-        ),
+        )
       ],
     );
   }
 
-  static String _songTitleArtist(Song song) {
-    String text;
+  IconData _chooseIcon(AudioPlayerState state) {
+    return state == AudioPlayerState.PLAYING ? Icons.pause_circle_filled : Icons
+        .play_circle_filled;
+  }
+}
 
-    if (song == null) {
-      text = "Choose a song!";
-    } else {
-      String songName = song.title;
-      String artistName = song.artist;
+class _NextQueueSong extends StatelessWidget {
+  final MediaLibrary _mediaLibrary = MediaLibrary();
 
-      text = "${(artistName ??= "Unreadable")} - ${(
-          songName ??= "Unreadable")}";
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Flexible(
+          flex: 1,
+          child: Container(
+            color: Colors.white,
+            child: StreamBuilder(
+                stream: _mediaLibrary.queueDataController.queueStreamController,
+                builder: (_, AsyncSnapshot<StreamQueue<Song>> snapshot) {
+                  StreamQueue<Song> queue = snapshot.data;
+                  Song song = queue != null && !queue.isEmpty
+                      ? queue.first
+                      : null;
+                  String title = song?.title;
+                  String artist = song?.artist;
 
-    return text;
+                  return ListTile(
+                      leading: Icon(Icons.music_note),
+                      title: Text("${title ??= "No upcoming"}"),
+                      subtitle: Text("${artist ??= "Songs"}"),
+                      trailing: Text("Up next")
+                  );
+                }
+            ),
+          ),
+        )
+      ],
+    );
   }
 }

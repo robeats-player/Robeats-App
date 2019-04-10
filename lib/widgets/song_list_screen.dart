@@ -1,15 +1,11 @@
+import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 
 class SongListScreen extends StatelessWidget {
-  var _mediaLibrary = Robeats.mediaLibrary;
-  var _mediaLoader;
-
-  SongListScreen() {
-    _mediaLoader = _mediaLibrary.mediaLoader;
-  }
+  final MediaLibrary _mediaLibrary = MediaLibrary();
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +18,7 @@ class SongListScreen extends StatelessWidget {
             body: ListView(
               padding: EdgeInsets.only(top: 5.0),
               children: _SongListTile.prepareTiles(
-                  _mediaLoader.songSet, s.data),
+                  _mediaLibrary.mediaLoader.songSet, s.data),
             ),
             floatingActionButton: FloatingActionButton(
               child: Icon(Icons.queue_music, color: RobeatsThemeData.PRIMARY),
@@ -40,16 +36,13 @@ class SongListScreen extends StatelessWidget {
 }
 
 class _QueueBottomSheet extends Container {
-  static var _mediaLibrary = Robeats.mediaLibrary;
-  static var _mediaLoader = _mediaLibrary.mediaLoader;
-
   _QueueBottomSheet() : super(
       child: StreamBuilder<Object>(
-          stream: _mediaLibrary.songDataController.songStreamController,
+          stream: MediaLibrary().queueDataController.queueStreamController,
           builder: (_, s) {
             return ListView(
                 padding: EdgeInsets.only(top: 5.0),
-                children: _QueueTile.prepareTiles(_mediaLoader.songSet, s.data)
+                children: _QueueTile.prepareTiles(s.data)
             );
           }
       )
@@ -57,10 +50,9 @@ class _QueueBottomSheet extends Container {
 }
 
 class _SongListTile extends Container {
-  static var _mediaLibrary = Robeats.mediaLibrary;
-
   _SongListTile(Song song, bool current) : super(
     child: ListTile(
+        selected: current,
         leading: Icon(Icons.music_note),
         title: Text("${song.title}"),
         subtitle: Text("${song.artist}"),
@@ -71,13 +63,13 @@ class _SongListTile extends Container {
               IconButton(
                   icon: Icon(Icons.queue),
                   onPressed: () {
-                    _mediaLibrary.songQueue.add(song);
+                    MediaLibrary().songQueue.add(song);
                   }
               ),
               IconButton(
                   icon: Icon(Icons.play_circle_filled),
                   onPressed: () {
-                    _mediaLibrary.playSong(song);
+                    MediaLibrary().playSong(song);
                   }
               )
             ],
@@ -88,7 +80,7 @@ class _SongListTile extends Container {
     decoration: BoxDecoration(
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: current ? Colors.white : Colors.grey,
+            color: Colors.white,
             spreadRadius: 1.5,
           )
         ]
@@ -105,10 +97,9 @@ class _SongListTile extends Container {
 }
 
 class _QueueTile extends Container {
-  static var _mediaLibrary = Robeats.mediaLibrary;
   static int _index = 0;
 
-  _QueueTile(Song song, bool current) : super(
+  _QueueTile(Song song) : super(
     child: ListTile(
         leading: Icon(Icons.queue_music),
         title: Text("#${++_index} - ${song.title}"),
@@ -120,7 +111,7 @@ class _QueueTile extends Container {
               IconButton(
                   icon: Icon(Icons.play_circle_filled),
                   onPressed: () {
-                    _mediaLibrary.playSong(song);
+                    MediaLibrary().playQueue();
                   }
               )
             ],
@@ -131,18 +122,18 @@ class _QueueTile extends Container {
     decoration: BoxDecoration(
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: current ? Colors.white : Colors.grey,
+            color: Colors.white,
             spreadRadius: 1.5,
           )
         ]
     ),
   );
 
-  static List<_QueueTile> prepareTiles(Iterable<Song> iterable, Song current) {
+  static List<_QueueTile> prepareTiles(Iterable<Song> iterable) {
     _index = 0;
 
     if (iterable != null) {
-      return iterable.map((song) => _QueueTile(song, song == current)).toList();
+      return iterable.map((song) => _QueueTile(song)).toList();
     } else {
       return [];
     }

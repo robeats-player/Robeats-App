@@ -1,4 +1,3 @@
-import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/widgets/play_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -6,10 +5,6 @@ const String TITLE = "Robeats Player";
 
 void main() {
   runApp(new RobeatsApp());
-}
-
-class Robeats {
-  static MediaLibrary mediaLibrary = MediaLibrary();
 }
 
 class RobeatsApp extends StatelessWidget {
@@ -23,12 +18,12 @@ class RobeatsApp extends StatelessWidget {
 }
 
 class RobeatsThemeData {
-  static const Color PRIMARY = Color.fromRGBO(47, 45, 46, 1.0);
-  static const Color LIGHT = Color.fromRGBO(94, 98, 98, 1.0);
-  static const Color DARK = Color.fromRGBO(13, 18, 18, 1.0);
-  static const Color ACCENT = Color.fromRGBO(153, 194, 77, 1.0);
-  static const Color TEXT_COLOUR = Color.fromRGBO(0, 0, 0, 1.0);
-  static const Color TEXT_COLOUR_INVERSE = Color.fromRGBO(255, 255, 255, 1.0);
+  static const Color PRIMARY = Color.fromRGBO(39, 39, 75, 1.0);
+  static const Color LIGHT = Color.fromRGBO(52, 52, 104, 1.0);
+  static const Color DARK = Color.fromRGBO(20, 20, 75, 1.0);
+  static const Color ACCENT = Color.fromRGBO(52, 152, 219, 1.0);
+  static const Color TEXT_COLOUR = Colors.white;
+  static const Color TEXT_COLOUR_INVERSE = Colors.black;
   static ThemeData _instance;
 
   /// Cannot be instantiated.
@@ -52,10 +47,12 @@ class RobeatsThemeData {
           accentIconTheme: IconThemeData(color: ACCENT),
           backgroundColor: LIGHT,
           sliderTheme: SliderThemeData.fromPrimaryColors(
-              primaryColor: LIGHT,
+            primaryColor: Colors.white,
               primaryColorDark: DARK,
-              primaryColorLight: LIGHT,
-              valueIndicatorTextStyle: TextStyle(color: Colors.white)));
+            primaryColorLight: Colors.white,
+            valueIndicatorTextStyle: TextStyle(color: Colors.white),
+          )
+      );
     }
 
     return _instance;

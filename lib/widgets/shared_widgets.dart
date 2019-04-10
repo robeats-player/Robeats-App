@@ -1,20 +1,11 @@
+import 'dart:math';
+
 import 'package:Robeats/main.dart';
 import 'package:Robeats/widgets/local_network_screen.dart';
 import 'package:Robeats/widgets/play_screen.dart';
 import 'package:Robeats/widgets/playlist_screen.dart';
 import 'package:Robeats/widgets/song_list_screen.dart';
 import 'package:flutter/material.dart';
-
-class DarkBoxShadow extends BoxDecoration {
-  DarkBoxShadow() : super(
-    boxShadow: <BoxShadow>[
-      BoxShadow(
-          spreadRadius: 3.0,
-          blurRadius: 2.0
-      )
-    ],
-  );
-}
 
 class RobeatsAppBar extends AppBar {
   RobeatsAppBar() : super(
@@ -64,4 +55,50 @@ class RobeatsDrawer extends Drawer {
         ],
       )
   );
+}
+
+class SemiCircleBorder extends CircleBorder {
+  MediaQueryData _data;
+
+  SemiCircleBorder(BuildContext context) {
+    this._data = MediaQuery.of(context);
+  }
+
+  double _calculateRadius(Rect rect) {
+    return (rect.shortestSide - side.width) / 2;
+  }
+
+  double _calculateWidthFraction(Rect rect) {
+    return (_data.size.width / _calculateRadius(rect)) / 2;
+  }
+
+  @override
+  EdgeInsetsGeometry get dimensions {
+    double w = side.width;
+    return EdgeInsets.fromLTRB(w, 0, w, w);
+  }
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection textDirection}) {
+    double radius = _calculateRadius(rect);
+    double fraction = _calculateWidthFraction(rect);
+
+    return Path()
+      ..addOval(Rect.fromCircle(
+        center: Offset(radius * fraction, 0),
+        radius: rect.shortestSide,
+      ));
+  }
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection textDirection}) {
+    double radius = _calculateRadius(rect);
+    double fraction = _calculateWidthFraction(rect);
+
+    return Path()
+      ..addOval(Rect.fromCircle(
+        center: Offset(radius * fraction, 0),
+        radius: max(0.0, rect.shortestSide - side.width),
+      ));
+  }
 }
