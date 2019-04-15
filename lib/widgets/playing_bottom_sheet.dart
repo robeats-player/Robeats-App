@@ -6,12 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class PlayingBottomSheet extends StatelessWidget {
-  final _mediaLibrary = MediaLibrary();
-
   @override
   Widget build(BuildContext context) {
+    final mediaLibrary = MediaLibrary();
     return StreamBuilder(
-      stream: _mediaLibrary.playerStateData.currentSongStream,
+      stream: mediaLibrary.playerStateData.currentSongStream,
       builder: (_, AsyncSnapshot<Song> snapshot) {
         String title = snapshot.data?.title;
         String artist = snapshot.data?.artist;
@@ -34,7 +33,7 @@ class PlayingBottomSheet extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     StreamBuilder(
-                        stream: _mediaLibrary.playerStateData.songStateStream,
+                        stream: mediaLibrary.playerStateData.songStateStream,
                         builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
                           if (snapshot.data == null) return Container();
                           return IconButton(
@@ -44,7 +43,7 @@ class PlayingBottomSheet extends StatelessWidget {
                                   ? Icons.pause_circle_filled
                                   : Icons.play_circle_filled,
                             ),
-                            onPressed: () => _mediaLibrary.toggleState(),
+                            onPressed: () => mediaLibrary.toggleState(),
                           );
                         }),
                   ],
