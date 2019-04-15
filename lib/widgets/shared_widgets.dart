@@ -2,56 +2,59 @@ import 'dart:math';
 
 import 'package:Robeats/main.dart';
 import 'package:Robeats/widgets/local_network_screen.dart';
+import 'package:Robeats/widgets/play_screen.dart';
 import 'package:Robeats/widgets/playlist_screen.dart';
 import 'package:Robeats/widgets/song_list_screen.dart';
 import 'package:flutter/material.dart';
 
 class RobeatsAppBar extends AppBar {
-  RobeatsAppBar()
-      : super(
-          title: Text(TITLE),
-        );
+  RobeatsAppBar() : super(
+    title: Text(TITLE),
+  );
 }
 
 class RobeatsDrawer extends Drawer {
-  RobeatsDrawer(BuildContext buildContext)
-      : super(
-            child: ListView(
-          children: <Widget>[
-            DrawerHeader(child: Text("Navigate", style: TextStyle(fontSize: 25.0))),
-            ListTile(
-              leading: Icon(
-                Icons.book,
-                size: 40.0,
-              ),
-              title: Text("Song List"),
-              onTap: () {
-                Navigator.pushReplacement(buildContext, MaterialPageRoute(builder: (buildContext) => SongListScreen()));
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.playlist_play,
-                size: 40.0,
-              ),
-              title: Text("Playlists"),
-              onTap: () {
-                Navigator.pushReplacement(buildContext, MaterialPageRoute(builder: (buildContext) => PlaylistScreen()));
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.devices,
-                size: 40.0,
-              ),
-              title: Text("Network Devices"),
-              onTap: () {
-                Navigator.pushReplacement(
-                    buildContext, MaterialPageRoute(builder: (buildContext) => LocalNetworkScreen()));
-              },
-            )
-          ],
-        ));
+  RobeatsDrawer(BuildContext buildContext) : super(
+      child: ListView(
+        children: <Widget>[
+          DrawerHeader(
+              child: Text("Navigate", style: TextStyle(fontSize: 25.0))
+          ),
+          ListTile(
+            leading: Icon(Icons.book, size: 40.0,),
+            title: Text("Song List"),
+            onTap: () {
+              Navigator.pushReplacement(buildContext, MaterialPageRoute(
+                  builder: (buildContext) => SongListScreen()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.playlist_play, size: 40.0,),
+            title: Text("Playlists"),
+            onTap: () {
+              Navigator.pushReplacement(buildContext, MaterialPageRoute(
+                  builder: (buildContext) => PlaylistScreen()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.play_circle_filled, size: 40.0,),
+            title: Text("Now Playing"),
+            onTap: () {
+              Navigator.pushReplacement(buildContext,
+                  MaterialPageRoute(builder: (buildContext) => PlayScreen()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.devices, size: 40.0,),
+            title: Text("Network Devices"),
+            onTap: () {
+              Navigator.pushReplacement(buildContext, MaterialPageRoute(
+                  builder: (buildContext) => LocalNetworkScreen()));
+            },
+          )
+        ],
+      )
+  );
 }
 
 class SemiCircleBorder extends CircleBorder {

@@ -9,28 +9,16 @@ import 'package:flutter/material.dart';
 class PlayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragEnd: (DragEndDetails details) {
-        if (details.primaryVelocity > 0) Navigator.of(context).pop();
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                size: 30.0,
-                color: Colors.white,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-          body: Column(
-            children: <Widget>[
-              Expanded(flex: 80, child: _MediaDisplay()),
-              Expanded(flex: 45, child: _MediaControls()),
-              Expanded(flex: 75, child: _NextQueueSong())
-            ],
-          )),
+    return Scaffold(
+        appBar: RobeatsAppBar(),
+        drawer: RobeatsDrawer(context),
+        body: Column(
+          children: <Widget>[
+            Expanded(flex: 80, child: _MediaDisplay()),
+            Expanded(flex: 45, child: _MediaControls()),
+            Expanded(flex: 75, child: _NextQueueSong())
+          ],
+        )
     );
   }
 }
@@ -48,7 +36,7 @@ class _MediaDisplay extends StatelessWidget {
         width: data.size.width * 0.85,
         height: data.size.height * 0.85,
         child: StreamBuilder(
-            stream: _mediaLibrary.songDataController.songStreamController,
+            stream: _mediaLibrary.playerStateData.currentSongStream,
             builder: (_, AsyncSnapshot<Song> snapshot) {
               String title = snapshot.data?.title;
               String artist = snapshot.data?.artist;
@@ -73,11 +61,20 @@ class _MediaDisplay extends StatelessWidget {
                   )
                 ],
               );
-            }),
+            }
+        ),
         decoration: ShapeDecoration(
             shape: SemiCircleBorder(context),
             color: RobeatsThemeData.LIGHT,
-            shadows: <BoxShadow>[BoxShadow(color: RobeatsThemeData.DARK, blurRadius: 5, spreadRadius: 1)]));
+            shadows: <BoxShadow>[
+              BoxShadow(
+                  color: RobeatsThemeData.DARK,
+                  blurRadius: 5,
+                  spreadRadius: 1
+              )
+            ]
+        )
+    );
   }
 }
 
@@ -93,7 +90,7 @@ class _MediaControls extends StatelessWidget {
             Flexible(
                 flex: 1,
                 child: StreamBuilder(
-                  stream: _mediaLibrary.songDataController.durationStreamController,
+                  stream: _mediaLibrary.playerStateData.songDurationStream,
                   builder: (_, AsyncSnapshot<double> snapshot) {
                     double value = snapshot?.data;
 
@@ -102,7 +99,8 @@ class _MediaControls extends StatelessWidget {
                       onChanged: (value) => _mediaLibrary.seekFraction(value),
                     );
                   },
-                ))
+                )
+            )
           ],
         ),
         Row(
@@ -114,14 +112,15 @@ class _MediaControls extends StatelessWidget {
               onPressed: () => _mediaLibrary.playPrevious(),
             ),
             StreamBuilder(
-                stream: _mediaLibrary.songDataController.stateStreamController,
+                stream: _mediaLibrary.playerStateData.songStateStream,
                 builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
                   return IconButton(
                     iconSize: 60.0,
                     icon: Icon(_chooseIcon(snapshot.data), color: Colors.white),
                     onPressed: () => _mediaLibrary.toggleState(),
                   );
-                }),
+                }
+            ),
             IconButton(
               iconSize: 40.0,
               icon: Icon(Icons.skip_next, color: Colors.white),
@@ -134,7 +133,8 @@ class _MediaControls extends StatelessWidget {
   }
 
   IconData _chooseIcon(AudioPlayerState state) {
-    return state == AudioPlayerState.PLAYING ? Icons.pause_circle_filled : Icons.play_circle_filled;
+    return state == AudioPlayerState.PLAYING ? Icons.pause_circle_filled : Icons
+        .play_circle_filled;
   }
 }
 
@@ -151,10 +151,12 @@ class _NextQueueSong extends StatelessWidget {
           child: Container(
             color: Colors.white,
             child: StreamBuilder(
-                stream: _mediaLibrary.queueDataController.queueStreamController,
+                stream: _mediaLibrary.playerStateData.songQueueStream,
                 builder: (_, AsyncSnapshot<StreamQueue<Song>> snapshot) {
                   StreamQueue<Song> queue = snapshot.data;
-                  Song song = queue != null && !queue.isEmpty ? queue.first : null;
+                  Song song = queue != null && !queue.isEmpty
+                      ? queue.first
+                      : null;
                   String title = song?.title;
                   String artist = song?.artist;
 
@@ -162,8 +164,10 @@ class _NextQueueSong extends StatelessWidget {
                       leading: Icon(Icons.music_note),
                       title: Text("${title ??= "No upcoming"}"),
                       subtitle: Text("${artist ??= "Songs"}"),
-                      trailing: Text("Up next"));
-                }),
+                      trailing: Text("Up next")
+                  );
+                }
+            ),
           ),
         )
       ],

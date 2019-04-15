@@ -2,8 +2,7 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:Robeats/data/media_loader.dart';
-import 'package:Robeats/data/streams/queue_data_controller.dart';
-import 'package:Robeats/data/streams/song_data_controller.dart';
+import 'package:Robeats/data/streams/player_state_data.dart';
 import 'package:Robeats/structures/data_structures/stack.dart';
 import 'package:Robeats/structures/data_structures/stream_queue.dart';
 import 'package:Robeats/structures/media.dart';
@@ -13,15 +12,13 @@ class MediaLibrary {
   static final MediaLibrary _instance = MediaLibrary._private();
   final MediaLoader _mediaLoader = MediaLoader();
 
-  SongStateDataController songDataController = SongStateDataController();
-  QueueDataController queueDataController = QueueDataController();
+  PlayerStateData _playerStateData = PlayerStateData();
   AudioPlayer _audioPlayer = AudioPlayer();
-  Song currentlyPlayingSong;
   Stack<Song> _songStack = Stack();
   StreamQueue<Song> _songQueue;
 
   MediaLibrary._private() {
-    _songQueue = StreamQueue(queueDataController.queueStreamController);
+    _songQueue = StreamQueue(_playerStateData.songQueueStream);
 
     _initialiseAudioEvents();
   }
@@ -32,7 +29,11 @@ class MediaLibrary {
 
   MediaLoader get mediaLoader => _mediaLoader;
 
+  PlayerStateData get playerStateData => _playerStateData;
+
   StreamQueue<Song> get songQueue => _songQueue;
+
+  Song get currentlyPlayingSong => playerStateData.currentSongStream.value;
 
   /// Listens to the stream for duration changes, and send it to the sink of
   /// the [SongStateDataController] to update the UI.
@@ -41,10 +42,11 @@ class MediaLibrary {
       double durationFraction = 0;
 
       if (currentlyPlayingSong.duration != null) {
-        durationFraction = (duration.inSeconds / currentlyPlayingSong.duration.inSeconds);
+        durationFraction =
+        (duration.inSeconds / currentlyPlayingSong.duration.inSeconds);
       }
 
-      songDataController.durationStreamController.add(durationFraction);
+      _playerStateData.songDurationStream.add(durationFraction);
     });
 
     _audioPlayer.onPlayerCompletion.listen((event) {
@@ -56,7 +58,7 @@ class MediaLibrary {
     });
 
     _audioPlayer.onPlayerStateChanged.listen((state) {
-      songDataController.stateStreamController.add(state);
+      _playerStateData.songStateStream.add(state);
     });
   }
 
@@ -79,8 +81,7 @@ class MediaLibrary {
     }
 
     _audioPlayer.play(url, volume: 0.35);
-    currentlyPlayingSong = song;
-    songDataController.songStreamController.add(song);
+    _playerStateData.currentSongStream.add(song);
 
     song.duration ??= await _audioPlayer.onDurationChanged.first;
   }
@@ -120,7 +121,8 @@ class MediaLibrary {
         _audioPlayer.resume();
         break;
       default:
-        if (_songQueue.isNotEmpty) playQueue();
+        if (_songQueue.isNotEmpty)
+          playQueue();
 
         break;
     }
@@ -135,9 +137,8 @@ class MediaLibrary {
     _audioPlayer.stop();
     _audioPlayer.release();
 
-    songDataController.songStreamController.add(null);
-    songDataController.durationStreamController.add(0);
-    currentlyPlayingSong = null;
+    _playerStateData.currentSongStream.add(null);
+    _playerStateData.songDurationStream.add(0);
   }
 
   /// Pop the last element from the stack, and if it's not null, play it.
