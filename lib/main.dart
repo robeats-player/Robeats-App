@@ -1,19 +1,18 @@
-import 'package:Robeats/widgets/play_screen.dart';
+import 'package:Robeats/data/media_library.dart';
+import 'package:Robeats/widgets/song_list_screen.dart';
 import 'package:flutter/material.dart';
 
 const String TITLE = "Robeats Player";
 
-void main() {
+void main() async {
+  await MediaLibrary().mediaLoader.load();
   runApp(new RobeatsApp());
 }
 
 class RobeatsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: "Robeats Player",
-        home: PlayScreen(),
-        theme: RobeatsThemeData.getThemeData());
+    return MaterialApp(title: "Robeats Player", home: SongListScreen(), theme: RobeatsThemeData.getThemeData());
   }
 }
 
@@ -48,11 +47,10 @@ class RobeatsThemeData {
           backgroundColor: LIGHT,
           sliderTheme: SliderThemeData.fromPrimaryColors(
             primaryColor: Colors.white,
-              primaryColorDark: DARK,
+            primaryColorDark: DARK,
             primaryColorLight: Colors.white,
             valueIndicatorTextStyle: TextStyle(color: Colors.white),
-          )
-      );
+          ));
     }
 
     return _instance;
