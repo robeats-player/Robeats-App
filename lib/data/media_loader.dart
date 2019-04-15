@@ -11,10 +11,6 @@ class MediaLoader {
   Set<Song> _songSet = Set();
   Set<Playlist> _playlistSet = Set();
 
-  MediaLoader() {
-    loadSongs().then((_) => loadPlaylists());
-  }
-
   Set<Song> get songSet => _songSet;
 
   Set<Playlist> get playlistSet => _playlistSet;
@@ -33,9 +29,7 @@ class MediaLoader {
   /// Utility function - returns the file name based on a [FileSystemEntity]'s path.
   /// E.g. /a/b/c/song.mp3 would return song.mp3
   static String _getFileName(FileSystemEntity entity) {
-    return entity.path
-        .split('/')
-        .last;
+    return entity.path.split('/').last;
   }
 
   /// Utility function - returns the ID3 [Tag] based on a song. Depending on
@@ -47,18 +41,18 @@ class MediaLoader {
       file.readAsBytes(),
     );
 
-    return tags.firstWhere(
-            (tag) => tag != null && tag.tags.isNotEmpty,
-        orElse: () => null
-    );
+    return tags.firstWhere((tag) => tag != null && tag.tags.isNotEmpty, orElse: () => null);
+  }
+
+  Future<void> load() async {
+    await loadSongs().then((_) => loadPlaylists());
   }
 
   /// (Recursively) loop through all files of the [Directory]. Any files
   /// with type .mp3 will be loaded, tags read, [Song] objects created
   /// and added to the [_songSet].
   Future<void> loadSongs() async {
-    List<FileSystemEntity> entities = (await directory).listSync(
-        recursive: true);
+    List<FileSystemEntity> entities = (await directory).listSync(recursive: true);
 
     for (FileSystemEntity entity in entities) {
       String fileName = _getFileName(entity);
@@ -69,9 +63,7 @@ class MediaLoader {
         String artist = metaTags?.tags['artist'];
         String hash = md5.convert(entity.readAsBytesSync()).toString();
 
-        _songSet.add(Song(
-            fileName, songTitle, hash, artist, null
-        ));
+        _songSet.add(Song(fileName, songTitle, hash, artist, null));
       }
     }
   }
@@ -93,12 +85,9 @@ class MediaLoader {
       Map<String, dynamic> innerMap = playlist.value;
       List<String> songHashes = List<String>.from(innerMap['songs']);
 
-      List<Song> songs = _songSet.where((song) =>
-          songHashes.contains(song.hash)).toList();
+      List<Song> songs = _songSet.where((song) => songHashes.contains(song.hash)).toList();
 
-      _playlistSet.add(Playlist(
-          playlist.key, songs
-      ));
+      _playlistSet.add(Playlist(playlist.key, songs));
     }
   }
 }

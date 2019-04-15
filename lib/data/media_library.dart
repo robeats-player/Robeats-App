@@ -16,7 +16,7 @@ class MediaLibrary {
   SongStateDataController songDataController = SongStateDataController();
   QueueDataController queueDataController = QueueDataController();
   AudioPlayer _audioPlayer = AudioPlayer();
-  Song _currentlyPlayingSong;
+  Song currentlyPlayingSong;
   Stack<Song> _songStack = Stack();
   StreamQueue<Song> _songQueue;
 
@@ -40,9 +40,8 @@ class MediaLibrary {
     _audioPlayer.onAudioPositionChanged.listen((duration) {
       double durationFraction = 0;
 
-      if (_currentlyPlayingSong.duration != null) {
-        durationFraction =
-        (duration.inSeconds / _currentlyPlayingSong.duration.inSeconds);
+      if (currentlyPlayingSong.duration != null) {
+        durationFraction = (duration.inSeconds / currentlyPlayingSong.duration.inSeconds);
       }
 
       songDataController.durationStreamController.add(durationFraction);
@@ -75,12 +74,12 @@ class MediaLibrary {
   void playSong(Song song, [bool stack = true]) async {
     String url = await song.directory;
 
-    if (stack && _currentlyPlayingSong != null) {
-      _songStack.push(_currentlyPlayingSong);
+    if (stack && currentlyPlayingSong != null) {
+      _songStack.push(currentlyPlayingSong);
     }
 
     _audioPlayer.play(url, volume: 0.35);
-    _currentlyPlayingSong = song;
+    currentlyPlayingSong = song;
     songDataController.songStreamController.add(song);
 
     song.duration ??= await _audioPlayer.onDurationChanged.first;
@@ -121,8 +120,7 @@ class MediaLibrary {
         _audioPlayer.resume();
         break;
       default:
-        if (_songQueue.isNotEmpty)
-          playQueue();
+        if (_songQueue.isNotEmpty) playQueue();
 
         break;
     }
@@ -139,7 +137,7 @@ class MediaLibrary {
 
     songDataController.songStreamController.add(null);
     songDataController.durationStreamController.add(0);
-    _currentlyPlayingSong = null;
+    currentlyPlayingSong = null;
   }
 
   /// Pop the last element from the stack, and if it's not null, play it.
@@ -170,7 +168,7 @@ class MediaLibrary {
   /// it's not loaded - due to it being async, it will return null. If it is
   /// null no seeking will be done.
   void seekFraction(double fraction) async {
-    Duration totalDuration = _currentlyPlayingSong?.duration;
+    Duration totalDuration = currentlyPlayingSong?.duration;
 
     if (totalDuration != null) {
       Duration duration = totalDuration * fraction;
