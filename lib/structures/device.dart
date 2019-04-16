@@ -7,20 +7,19 @@ enum DeviceType { COMPUTER, MOBILE, TABLET }
 class Device {
   static final Device localDevice = Device._localDeviceConstructor();
 
-  final String uuid;
-  DeviceType deviceType;
+  final int id;
   String chosenIdentifier;
 
-  Device(this.uuid, this.deviceType, this.chosenIdentifier);
+  Device(this.id, this.chosenIdentifier);
 
   /// Constructor used, once, to create an instance of the local device.
   factory Device._localDeviceConstructor() {
-    return Device("", DeviceType.MOBILE, "(This Device)");
+    return Device(0, "(This Device)");
   }
 }
 
 /// A [Device] that is not local, and can - therefore, be synced to.
 class ForeignDevice extends Device {
-  ForeignDevice(String uuid, DeviceType deviceType, String chosenIdentifier)
-      : super(uuid, deviceType, chosenIdentifier);
+  ForeignDevice(int id, DeviceType deviceType, String chosenIdentifier)
+      : super(id, chosenIdentifier);
 }

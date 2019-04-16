@@ -43,7 +43,7 @@ class _NetworkGridTile extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 flex: 6,
-                child: LayoutBuilder(builder: (context, constraint) => Icon(_chooseIcon(_device.deviceType))),
+                child: LayoutBuilder(builder: (context, constraint) => Icon(Icons.devices)),
               ),
               Expanded(
                   flex: 4,
