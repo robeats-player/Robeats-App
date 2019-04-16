@@ -27,10 +27,17 @@ class PlaylistScreen extends StatelessWidget {
   }
 }
 
-class _PlaylistGridTile extends GridTile {
-  _PlaylistGridTile(Playlist playlist)
-      : super(
-            child: GestureDetector(
+class _PlaylistGridTile extends StatelessWidget {
+  Playlist _playlist;
+
+  _PlaylistGridTile(Playlist playlist) {
+    this._playlist = playlist;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GridTile(
+        child: GestureDetector(
           child: Card(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -42,7 +49,7 @@ class _PlaylistGridTile extends GridTile {
                 Expanded(
                     flex: 4,
                     child: Text(
-                      playlist.identifier,
+                      _playlist.identifier,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white, fontSize: 15.0),
                     ))
@@ -50,7 +57,8 @@ class _PlaylistGridTile extends GridTile {
             ),
           ),
           onTap: () {
-            MediaLibrary().playPlaylist(playlist);
+            MediaLibrary().playPlaylist(_playlist);
           },
         ));
+  }
 }

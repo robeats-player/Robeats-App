@@ -54,10 +54,7 @@ class MediaLoader {
       file.readAsBytes(),
     );
 
-    return tags.firstWhere(
-            (tag) => tag != null && tag.tags.isNotEmpty,
-        orElse: () => null
-    );
+    return tags.firstWhere((tag) => tag != null && tag.tags.isNotEmpty, orElse: () => null);
   }
 
   /// Load all songs & playlists.
@@ -69,8 +66,7 @@ class MediaLoader {
   /// with type .mp3 will be loaded, tags read, [Song] objects created
   /// and added to the [_songSet].
   Future<void> loadSongs() async {
-    List<FileSystemEntity> entities = (await directory).listSync(
-        recursive: true);
+    List<FileSystemEntity> entities = (await directory).listSync(recursive: true);
 
     for (FileSystemEntity entity in entities) {
       String fileName = _getFileName(entity);
@@ -81,9 +77,7 @@ class MediaLoader {
         String artist = metaTags?.tags['artist'];
         String hash = md5.convert(entity.readAsBytesSync()).toString();
 
-        _songSet.add(Song(
-            fileName, songTitle, hash, artist, null
-        ));
+        _songSet.add(Song(fileName, songTitle, hash, artist, null));
       }
     }
   }
@@ -105,12 +99,9 @@ class MediaLoader {
       Map<String, dynamic> innerMap = playlist.value;
       List<String> songHashes = List<String>.from(innerMap['songs']);
 
-      List<Song> songs = _songSet.where((song) =>
-          songHashes.contains(song.hash)).toList();
+      List<Song> songs = _songSet.where((song) => songHashes.contains(song.hash)).toList();
 
-      _playlistSet.add(Playlist(
-          playlist.key, songs
-      ));
+      _playlistSet.add(Playlist(playlist.key, songs));
     }
   }
 }

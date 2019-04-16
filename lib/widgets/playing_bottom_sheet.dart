@@ -9,50 +9,67 @@ class PlayingBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaLibrary = MediaLibrary();
+
     return StreamBuilder(
       stream: mediaLibrary.playerStateData.currentSongStream,
       builder: (_, AsyncSnapshot<Song> snapshot) {
-        String title = snapshot.data?.title;
-        String artist = snapshot.data?.artist;
-        artist ??= "";
-        if (title == null)
+        if (snapshot.data == null) {
           return Container(
             height: 0,
           );
+        }
 
-        return Container(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext c) => PlayScreen())),
-                leading: Icon(Icons.music_note),
-                title: Text(title ?? "title"),
-                subtitle: Text(artist ?? "artist"),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    StreamBuilder(
-                        stream: mediaLibrary.playerStateData.songStateStream,
-                        builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
-                          if (snapshot.data == null) return Container();
-                          return IconButton(
-                            iconSize: 40.0,
-                            icon: Icon(
-                              snapshot.data == AudioPlayerState.PLAYING
-                                  ? Icons.pause_circle_filled
-                                  : Icons.play_circle_filled,
-                            ),
-                            onPressed: () => mediaLibrary.toggleState(),
-                          );
-                        }),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
+        return new _PlayingContainer(snapshot.data);
       },
     );
+  }
+}
+
+class _PlayingContainer extends StatelessWidget {
+  Song _song;
+
+  _PlayingContainer(Song song) {
+    this._song = song;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final MediaLibrary mediaLibrary = MediaLibrary();
+    String title = (_song.title ??= "Unreadable");
+    String artist = (_song.artist ??= "Unreadable");
+
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ListTile(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext c) => PlayScreen()));
+            },
+            leading: Icon(Icons.music_note),
+            title: Text(title),
+            subtitle: Text(artist),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                StreamBuilder(
+                    stream: mediaLibrary.playerStateData.songStateStream,
+                    builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
+                      return IconButton(
+                        iconSize: 40.0,
+                        icon: Icon(_chooseIcon(snapshot.data)),
+                        onPressed: () => mediaLibrary.toggleState(),
+                      );
+                    }),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _chooseIcon(AudioPlayerState state) {
+    return state == AudioPlayerState.PLAYING ? Icons.pause_circle_filled : Icons.play_circle_filled;
   }
 }

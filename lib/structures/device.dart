@@ -1,9 +1,5 @@
 /// The type that a [Device] could be.
-enum DeviceType {
-  COMPUTER,
-  MOBILE,
-  TABLET
-}
+enum DeviceType { COMPUTER, MOBILE, TABLET }
 
 /// Refers to a Device running a Robeats instance - whether that be the
 /// Desktop app, or a mobile app on iOS or Android (this includes the local

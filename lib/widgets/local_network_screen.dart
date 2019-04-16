@@ -27,27 +27,35 @@ class LocalNetworkScreen extends StatelessWidget {
   }
 }
 
-class _NetworkGridTile extends GridTile {
-  _NetworkGridTile(Device device)
-      : super(
-            child: Card(
+class _NetworkGridTile extends StatelessWidget {
+  Device _device;
+
+  _NetworkGridTile(Device device) {
+    this._device = device;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GridTile(
+        child: Card(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Expanded(
                 flex: 6,
-                child: LayoutBuilder(builder: (context, constraint) => Icon(_chooseIcon(device.deviceType))),
+                child: LayoutBuilder(builder: (context, constraint) => Icon(_chooseIcon(_device.deviceType))),
               ),
               Expanded(
                   flex: 4,
                   child: Text(
-                    device.chosenIdentifier,
+                    _device.chosenIdentifier,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white, fontSize: 15.0),
                   )),
             ],
           ),
         ));
+  }
 
   static IconData _chooseIcon(DeviceType deviceType) {
     switch (deviceType) {

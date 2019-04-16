@@ -154,7 +154,7 @@ class _NextQueueSong extends StatelessWidget {
                 stream: _mediaLibrary.playerStateData.songQueueStream,
                 builder: (_, AsyncSnapshot<StreamQueue<Song>> snapshot) {
                   StreamQueue<Song> queue = snapshot.data;
-                  Song song = queue != null && !queue.isEmpty ? queue.first : null;
+                  Song song = queue != null && queue.isNotEmpty ? queue.first : null;
                   String title = song?.title;
                   String artist = song?.artist;
 

@@ -7,8 +7,7 @@ class Song {
   String artist;
   Duration duration;
 
-  Song(String fileName, String title, String hash, String artist,
-      Duration duration) {
+  Song(String fileName, String title, String hash, String artist, Duration duration) {
     this._fileName = fileName;
     this.title = title;
     this.hash = hash;
@@ -26,10 +25,7 @@ class Song {
   /// of the song's mp3 file is equal.
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-          other is Song &&
-              runtimeType == other.runtimeType &&
-              hash == other.hash;
+      identical(this, other) || other is Song && runtimeType == other.runtimeType && hash == other.hash;
 
   @override
   int get hashCode => hash.hashCode;
@@ -46,10 +42,7 @@ class Playlist {
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        other is Playlist &&
-            runtimeType == other.runtimeType &&
-            identifier == other.identifier &&
-            songs == other.songs;
+        other is Playlist && runtimeType == other.runtimeType && identifier == other.identifier && songs == other.songs;
   }
 
   @override

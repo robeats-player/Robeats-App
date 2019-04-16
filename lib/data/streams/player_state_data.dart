@@ -16,6 +16,4 @@ class PlayerStateData {
   BehaviorSubject<AudioPlayerState> get songStateStream => _songStateStream;
 
   BehaviorSubject<StreamQueue<Song>> get songQueueStream => _songQueueStream;
-
-
 }

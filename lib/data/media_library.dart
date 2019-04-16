@@ -42,8 +42,7 @@ class MediaLibrary {
       double durationFraction = 0;
 
       if (currentlyPlayingSong.duration != null) {
-        durationFraction =
-        (duration.inSeconds / currentlyPlayingSong.duration.inSeconds);
+        durationFraction = (duration.inSeconds / currentlyPlayingSong.duration.inSeconds);
       }
 
       _playerStateData.songDurationStream.add(durationFraction);
@@ -121,8 +120,7 @@ class MediaLibrary {
         _audioPlayer.resume();
         break;
       default:
-        if (_songQueue.isNotEmpty)
-          playQueue();
+        if (_songQueue.isNotEmpty) playQueue();
 
         break;
     }

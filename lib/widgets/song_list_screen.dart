@@ -37,14 +37,15 @@ class SongListScreen extends StatelessWidget {
   }
 }
 
-class _QueueBottomSheet extends Container {
-  _QueueBottomSheet()
-      : super(
-            child: StreamBuilder<Object>(
-                stream: MediaLibrary().playerStateData.songQueueStream,
-                builder: (_, s) {
-                  return ListView(padding: EdgeInsets.only(top: 5.0), children: _QueueTile.prepareTiles(s.data));
-                }));
+class _QueueBottomSheet extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: StreamBuilder<Object>(
+            stream: MediaLibrary().playerStateData.songQueueStream,
+            builder: (_, s) =>
+                ListView(padding: EdgeInsets.only(top: 5.0), children: _QueueTile.prepareTiles(s.data))));
+  }
 }
 
 class _SongListTile extends StatelessWidget {
@@ -99,35 +100,41 @@ class _SongListTile extends StatelessWidget {
   }
 }
 
-class _QueueTile extends Container {
+class _QueueTile extends StatelessWidget {
   static int _index = 0;
+  Song _song;
 
-  _QueueTile(Song song)
-      : super(
-          child: ListTile(
-              leading: Icon(Icons.queue_music),
-              title: Text("#${++_index} - ${song.title}"),
-              subtitle: Text("${song.artist}"),
-              trailing: Container(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    IconButton(
-                        icon: Icon(Icons.play_circle_filled),
-                        onPressed: () {
-                          MediaLibrary().playQueue();
-                        })
-                  ],
-                ),
-              )),
-          margin: EdgeInsets.only(top: 5.0),
-          decoration: BoxDecoration(boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: Colors.white,
-              spreadRadius: 1.5,
-            )
-          ]),
-        );
+  _QueueTile(Song song) {
+    this._song = song;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: ListTile(
+            leading: Icon(Icons.queue_music),
+            title: Text("#${++_index} - ${_song.title}"),
+            subtitle: Text("${_song.artist}"),
+            trailing: Container(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                      icon: Icon(Icons.play_circle_filled),
+                      onPressed: () {
+                        MediaLibrary().playQueue();
+                      })
+                ],
+              ),
+            )),
+        margin: EdgeInsets.only(top: 5.0),
+        decoration: BoxDecoration(boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.white,
+            spreadRadius: 1.5,
+          )
+        ]));
+  }
 
   static List<_QueueTile> prepareTiles(Iterable<Song> iterable) {
     _index = 0;
