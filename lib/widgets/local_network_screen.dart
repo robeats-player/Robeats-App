@@ -1,4 +1,3 @@
-import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/structures/device.dart';
 import 'package:Robeats/widgets/playing_bottom_sheet.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
@@ -10,9 +9,7 @@ class LocalNetworkScreen extends StatelessWidget {
     return Scaffold(
         appBar: RobeatsAppBar(),
         drawer: RobeatsDrawer(context),
-        bottomSheet: MediaLibrary().songQueue.isEmpty && MediaLibrary().currentlyPlayingSong == null
-            ? null
-            : PlayingBottomSheet(),
+        bottomSheet: PlayingBottomSheet(),
         body: Padding(padding: EdgeInsets.only(top: 5.0), child: _createGridView()));
   }
 

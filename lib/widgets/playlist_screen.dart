@@ -16,9 +16,7 @@ class PlaylistScreen extends StatelessWidget {
     return Scaffold(
         appBar: RobeatsAppBar(),
         drawer: RobeatsDrawer(context),
-        bottomSheet: MediaLibrary().songQueue.isEmpty && MediaLibrary().currentlyPlayingSong == null
-            ? null
-            : PlayingBottomSheet(),
+        bottomSheet: PlayingBottomSheet(),
         body: GridView.count(
           crossAxisCount: 2,
           crossAxisSpacing: 10.0,

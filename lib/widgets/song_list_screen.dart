@@ -18,9 +18,7 @@ class SongListScreen extends StatelessWidget {
           return Scaffold(
             appBar: RobeatsAppBar(),
             drawer: RobeatsDrawer(context),
-            bottomSheet: MediaLibrary().songQueue.isEmpty && MediaLibrary().currentlyPlayingSong == null
-                ? null
-                : PlayingBottomSheet(),
+            bottomSheet: PlayingBottomSheet(),
             body: ListView(
               padding: EdgeInsets.only(top: 5.0),
               children: _SongListTile.prepareTiles(_mediaLibrary.mediaLoader.songSet, s.data),
