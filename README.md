@@ -24,7 +24,6 @@ can offer. You must prescribe to the dartfmt guidelines for styling.
 Ensure, if you use Android Studio or another JetBrains IDE, that you 
 turn this on. If you do not use an IDE capable of supporting dartfmt,
 [take a look here](http://github.com/dart-lang/dart_style/ "take a look here").
-You should also set your line-wrap to be at 120.
 
 ###### Side-Note:
 I have not included, as of yet, any android or ios files. If you are 
@@ -32,3 +31,11 @@ going to build the app, you must run the flutter command to create
 these - as I am using the default package com.example.... so it does not
 matter what you use. Eventually, I will include the files, once we use a
 package name.
+
+
+
+#### To-Do:
+
+- [ ] Begin implementation the Robeats State Protocol.
+- [ ] Update the material style, and make the app look a lot better...
+- [ ] Implement song syncing.

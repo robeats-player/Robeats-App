@@ -13,6 +13,12 @@ class PlayingBottomSheet extends StatelessWidget {
     return StreamBuilder(
       stream: mediaLibrary.playerStateData.currentSongStream,
       builder: (_, AsyncSnapshot<Song> snapshot) {
+        if (snapshot.data == null) {
+          return Container(
+            height: 0,
+          );
+        }
+
         return new _PlayingContainer(snapshot.data);
       },
     );
@@ -29,8 +35,8 @@ class _PlayingContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MediaLibrary mediaLibrary = MediaLibrary();
-    String title = _song == null ? "Choose a song!" : _song.title ?? "Unreadable";
-    String artist = _song == null ? "" : _song.artist ?? "Unreadable";
+    String title = (_song.title ??= "Unreadable");
+    String artist = (_song.artist ??= "Unreadable");
 
     return Container(
       child: Column(
