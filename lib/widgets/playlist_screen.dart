@@ -5,20 +5,18 @@ import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 
 class PlaylistScreen extends StatelessWidget {
-  final MediaLibrary _mediaLibrary = MediaLibrary();
-
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = _mediaLibrary.mediaLoader.playlistSet.map((playlist) {
+    final MediaLibrary mediaLibrary = MediaLibrary();
+
+    List<Widget> widgets = mediaLibrary.mediaLoader.playlistSet.map((playlist) {
       return _PlaylistGridTile(playlist);
     }).toList();
 
     return Scaffold(
         appBar: RobeatsAppBar(),
         drawer: RobeatsDrawer(context),
-        bottomSheet: MediaLibrary().songQueue.isEmpty && MediaLibrary().currentlyPlayingSong == null
-            ? null
-            : PlayingBottomSheet(),
+        bottomSheet: PlayingBottomSheet(),
         body: GridView.count(
           crossAxisCount: 2,
           crossAxisSpacing: 10.0,

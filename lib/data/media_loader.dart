@@ -8,32 +8,23 @@ import 'package:dart_tags/dart_tags.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MediaLoader {
-  Set<Song> _songSet = Set();
+  List<Song> _songList = List();
   Set<Playlist> _playlistSet = Set();
 
-  MediaLoader() {
-    loadSongs().then((_) => loadPlaylists());
-  }
+  MediaLoader();
 
-  Set<Song> get songSet => _songSet;
+  List<Song> get songList => _songList;
 
   Set<Playlist> get playlistSet => _playlistSet;
 
   Song get randomSong {
-    return _songSet.elementAt(new Random().nextInt(_songSet.length));
-  }
-
-  /// Return the directory used by the OS (iOS or Android) that the app
-  /// can save music to.
-  static Future<Directory> getMediaDirectory() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    return Directory(directory.path);
+    return _songList.elementAt(new Random().nextInt(_songList.length));
   }
 
   /// Get the [Directory] that music is all saved to.
   /// Async, as path_provider dictates.
   static Future<Directory> get directory async {
-    Directory appDataDirectory = await getMediaDirectory();
+    Directory appDataDirectory = await getApplicationDocumentsDirectory();
     return Directory(appDataDirectory.path + "/" + "music");
   }
 
@@ -59,13 +50,13 @@ class MediaLoader {
 
   /// Load all songs & playlists.
   Future<void> load() async {
-    await loadSongs().then((_) => loadPlaylists());
+    await _loadSongs().then((_) => _loadPlaylists());
   }
 
   /// (Recursively) loop through all files of the [Directory]. Any files
   /// with type .mp3 will be loaded, tags read, [Song] objects created
-  /// and added to the [_songSet].
-  Future<void> loadSongs() async {
+  /// and added to the [_songList].
+  Future<void> _loadSongs() async {
     List<FileSystemEntity> entities = (await directory).listSync(recursive: true);
 
     for (FileSystemEntity entity in entities) {
@@ -77,7 +68,7 @@ class MediaLoader {
         String artist = metaTags?.tags['artist'];
         String hash = md5.convert(entity.readAsBytesSync()).toString();
 
-        _songSet.add(Song(fileName, songTitle, hash, artist, null));
+        _songList.add(Song(fileName, songTitle, hash, artist, null));
       }
     }
   }
@@ -85,7 +76,7 @@ class MediaLoader {
   /// Loop through all playlists in the _playlists.json file. Any songs
   /// whose hash is in the list 'songs' will be added the the [Playlist].
   /// This [Playlist] will be added to [_playlistSet]
-  Future<void> loadPlaylists() async {
+  Future<void> _loadPlaylists() async {
     Directory dir = await directory;
     File file = File(dir.path + "/_playlists.json");
 
@@ -99,7 +90,7 @@ class MediaLoader {
       Map<String, dynamic> innerMap = playlist.value;
       List<String> songHashes = List<String>.from(innerMap['songs']);
 
-      List<Song> songs = _songSet.where((song) => songHashes.contains(song.hash)).toList();
+      List<Song> songs = _songList.where((song) => songHashes.contains(song.hash)).toList();
 
       _playlistSet.add(Playlist(playlist.key, songs));
     }

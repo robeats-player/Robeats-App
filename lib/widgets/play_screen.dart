@@ -50,9 +50,8 @@ class _MediaDisplay extends StatelessWidget {
         child: StreamBuilder(
             stream: _mediaLibrary.playerStateData.currentSongStream,
             builder: (_, AsyncSnapshot<Song> snapshot) {
-              String title = snapshot.data?.title;
-              String artist = snapshot.data?.artist;
-              artist ??= "";
+              String title = snapshot.data == null ? "Choose a song!" : snapshot.data.title ?? "Unreadable";
+              String artist = snapshot.data?.artist ?? "";
 
               return Column(
                 children: <Widget>[
@@ -61,7 +60,7 @@ class _MediaDisplay extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text("${title ??= "Choose a song!"}", style: songStyle),
+                        Text("$title", style: songStyle),
                       ],
                     ),
                   ),

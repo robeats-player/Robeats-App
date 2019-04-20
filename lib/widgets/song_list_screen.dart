@@ -8,22 +8,20 @@ import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 
 class SongListScreen extends StatelessWidget {
-  final MediaLibrary _mediaLibrary = MediaLibrary();
-
   @override
   Widget build(BuildContext context) {
+    final MediaLibrary mediaLibrary = MediaLibrary();
+
     return StreamBuilder<Object>(
-        stream: _mediaLibrary.playerStateData.currentSongStream,
+        stream: mediaLibrary.playerStateData.currentSongStream,
         builder: (_, s) {
           return Scaffold(
             appBar: RobeatsAppBar(),
             drawer: RobeatsDrawer(context),
-            bottomSheet: MediaLibrary().songQueue.isEmpty && MediaLibrary().currentlyPlayingSong == null
-                ? null
-                : PlayingBottomSheet(),
+            bottomSheet: PlayingBottomSheet(),
             body: ListView(
               padding: EdgeInsets.only(top: 5.0),
-              children: _SongListTile.prepareTiles(_mediaLibrary.mediaLoader.songSet, s.data),
+              children: _SongListTile.prepareTiles(mediaLibrary.mediaLoader.songList, s.data),
             ),
             floatingActionButton: FloatingActionButton(
               child: Icon(Icons.queue_music, color: RobeatsThemeData.PRIMARY),

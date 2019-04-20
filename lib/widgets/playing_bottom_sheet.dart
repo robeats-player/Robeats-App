@@ -13,7 +13,7 @@ class PlayingBottomSheet extends StatelessWidget {
     return StreamBuilder(
       stream: mediaLibrary.playerStateData.currentSongStream,
       builder: (_, AsyncSnapshot<Song> snapshot) {
-        if (snapshot.data == null) {
+        if (snapshot.data == null && mediaLibrary.songQueue.isEmpty) {
           return Container(
             height: 0,
           );
@@ -26,11 +26,9 @@ class PlayingBottomSheet extends StatelessWidget {
 }
 
 class _PlayingContainer extends StatelessWidget {
-  Song _song;
+  final Song _song;
 
-  _PlayingContainer(Song song) {
-    this._song = song;
-  }
+  _PlayingContainer(this._song);
 
   @override
   Widget build(BuildContext context) {

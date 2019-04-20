@@ -33,7 +33,7 @@ class MediaLibrary {
 
   StreamQueue<Song> get songQueue => _songQueue;
 
-  Song get currentlyPlayingSong => playerStateData.currentSongStream.value;
+  Song get currentlyPlayingSong => _playerStateData.currentSongStream.value;
 
   /// Listens to the stream for duration changes, and send it to the sink of
   /// the [SongStateDataController] to update the UI.
@@ -148,16 +148,26 @@ class MediaLibrary {
     }
   }
 
-  /// If the [Queue] is not empty, play the next song. If it is empty, play
-  /// a random song - as songs are not stored in a [Set] and therefore, not
-  /// any particular order.
+  /// If the [Queue] is not empty, play the next song. If it is empty and
+  /// the user is currently playing another song, play the next one. If
+  /// they are not currently playing a song, play a random song.
   void playNext() {
     if (_songQueue.isNotEmpty) {
       playQueue();
       return;
     }
 
-    Song song = _mediaLoader.randomSong;
+    Song song;
+
+    if (currentlyPlayingSong != null) {
+      int index = _mediaLoader.songList.indexOf(currentlyPlayingSong) + 1;
+      index %= _mediaLoader.songList.length;
+
+      song = _mediaLoader.songList[index];
+    } else {
+      song = _mediaLoader.randomSong;
+    }
+
     playSong(song);
   }
 
