@@ -12,7 +12,11 @@ void main() async {
 class RobeatsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: "Robeats Player", home: SongListScreen(), theme: RobeatsThemeData.getThemeData());
+    return MaterialApp(
+      title: "Robeats Player",
+      home: SongListScreen(),
+      theme: RobeatsThemeData.getThemeData(),
+    );
   }
 }
 
@@ -31,26 +35,27 @@ class RobeatsThemeData {
   static ThemeData getThemeData() {
     if (_instance == null) {
       _instance = ThemeData(
-          primarySwatch: Colors.blue,
-          primaryColor: PRIMARY,
-          primaryColorLight: LIGHT,
+        primarySwatch: Colors.blue,
+        primaryColor: PRIMARY,
+        primaryColorLight: LIGHT,
+        primaryColorDark: DARK,
+        accentColor: ACCENT,
+        textTheme: TextTheme().apply(displayColor: TEXT_COLOUR),
+        scaffoldBackgroundColor: PRIMARY,
+        bottomAppBarColor: LIGHT,
+        cardColor: DARK,
+        splashColor: DARK,
+        iconTheme: IconThemeData(color: PRIMARY),
+        primaryIconTheme: IconThemeData(color: Colors.white),
+        accentIconTheme: IconThemeData(color: ACCENT),
+        backgroundColor: LIGHT,
+        sliderTheme: SliderThemeData.fromPrimaryColors(
+          primaryColor: Colors.white,
           primaryColorDark: DARK,
-          accentColor: ACCENT,
-          textTheme: TextTheme().apply(displayColor: TEXT_COLOUR),
-          scaffoldBackgroundColor: PRIMARY,
-          bottomAppBarColor: LIGHT,
-          cardColor: DARK,
-          splashColor: DARK,
-          iconTheme: IconThemeData(color: PRIMARY),
-          primaryIconTheme: IconThemeData(color: Colors.white),
-          accentIconTheme: IconThemeData(color: ACCENT),
-          backgroundColor: LIGHT,
-          sliderTheme: SliderThemeData.fromPrimaryColors(
-            primaryColor: Colors.white,
-            primaryColorDark: DARK,
-            primaryColorLight: Colors.white,
-            valueIndicatorTextStyle: TextStyle(color: Colors.white),
-          ));
+          primaryColorLight: Colors.white,
+          valueIndicatorTextStyle: TextStyle(color: Colors.white),
+        ),
+      );
     }
 
     return _instance;

@@ -6,11 +6,17 @@ import 'package:flutter/material.dart';
 class LocalNetworkScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return RobeatsSlideUpPanel(
+      Scaffold(
         appBar: RobeatsAppBar(),
         drawer: RobeatsDrawer(context),
         bottomSheet: PlayingBottomSheet(),
-        body: Padding(padding: EdgeInsets.only(top: 5.0), child: _createGridView()));
+        body: Padding(
+          padding: EdgeInsets.only(top: 5.0),
+          child: _createGridView(),
+        ),
+      ),
+    );
   }
 
   GridView _createGridView() {
@@ -25,33 +31,33 @@ class LocalNetworkScreen extends StatelessWidget {
 }
 
 class _NetworkGridTile extends StatelessWidget {
-  Device _device;
+  final Device _device;
 
-  _NetworkGridTile(Device device) {
-    this._device = device;
-  }
+  _NetworkGridTile(this._device);
 
   @override
   Widget build(BuildContext context) {
     return GridTile(
-        child: Card(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                flex: 6,
-                child: LayoutBuilder(builder: (context, constraint) => Icon(Icons.devices)),
+      child: Card(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              flex: 6,
+              child: LayoutBuilder(builder: (context, constraint) => Icon(Icons.devices)),
+            ),
+            Expanded(
+              flex: 4,
+              child: Text(
+                _device.chosenIdentifier,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontSize: 15.0),
               ),
-              Expanded(
-                  flex: 4,
-                  child: Text(
-                    _device.chosenIdentifier,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 15.0),
-                  )),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   static IconData _chooseIcon(DeviceType deviceType) {
