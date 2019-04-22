@@ -34,11 +34,3 @@ going to build the app, you must run the flutter command to create
 these - as I am using the default package com.example.... so it does not
 matter what you use. Eventually, I will include the files, once we use a
 package name.
-
-
-
-#### To-Do:
-
-- [ ] Begin implementation the Robeats State Protocol.
-- [ ] Update the material style, and make the app look a lot better...
-- [ ] Implement song syncing.
