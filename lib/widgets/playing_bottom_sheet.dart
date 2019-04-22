@@ -1,6 +1,5 @@
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/structures/media.dart';
-import 'package:Robeats/widgets/play_screen.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -19,7 +18,7 @@ class PlayingBottomSheet extends StatelessWidget {
           );
         }
 
-        return new _PlayingContainer(snapshot.data);
+        return _PlayingContainer(snapshot.data == null ? mediaLibrary.songQueue.first : snapshot.data);
       },
     );
   }
@@ -37,13 +36,11 @@ class _PlayingContainer extends StatelessWidget {
     String artist = (_song.artist ??= "Unreadable");
 
     return Container(
+      color: Colors.white,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ListTile(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext c) => PlayScreen()));
-            },
             leading: Icon(Icons.music_note),
             title: Text(title),
             subtitle: Text(artist),
@@ -54,7 +51,7 @@ class _PlayingContainer extends StatelessWidget {
                     stream: mediaLibrary.playerStateData.songStateStream,
                     builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
                       return IconButton(
-                        iconSize: 40.0,
+                        iconSize: 30.0,
                         icon: Icon(_chooseIcon(snapshot.data)),
                         onPressed: () => mediaLibrary.toggleState(),
                       );

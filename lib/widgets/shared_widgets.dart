@@ -1,10 +1,14 @@
 import 'dart:math';
 
+import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/widgets/local_network_screen.dart';
+import 'package:Robeats/widgets/play_screen.dart';
+import 'package:Robeats/widgets/playing_bottom_sheet.dart';
 import 'package:Robeats/widgets/playlist_screen.dart';
 import 'package:Robeats/widgets/song_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class RobeatsAppBar extends AppBar {
   RobeatsAppBar()
@@ -16,42 +20,96 @@ class RobeatsAppBar extends AppBar {
 class RobeatsDrawer extends Drawer {
   RobeatsDrawer(BuildContext buildContext)
       : super(
-            child: ListView(
-          children: <Widget>[
-            DrawerHeader(child: Text("Navigate", style: TextStyle(fontSize: 25.0))),
-            ListTile(
-              leading: Icon(
-                Icons.book,
-                size: 40.0,
+          child: ListView(
+            children: <Widget>[
+              DrawerHeader(
+                child: Text(
+                  "Navigate",
+                  style: TextStyle(fontSize: 25.0),
+                ),
               ),
-              title: Text("Song List"),
-              onTap: () {
-                Navigator.pushReplacement(buildContext, MaterialPageRoute(builder: (buildContext) => SongListScreen()));
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.playlist_play,
-                size: 40.0,
+              ListTile(
+                leading: Icon(
+                  Icons.book,
+                  size: 40.0,
+                ),
+                title: Text("Song List"),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    buildContext,
+                    MaterialPageRoute(builder: (buildContext) => SongListScreen()),
+                  );
+                },
               ),
-              title: Text("Playlists"),
-              onTap: () {
-                Navigator.pushReplacement(buildContext, MaterialPageRoute(builder: (buildContext) => PlaylistScreen()));
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.devices,
-                size: 40.0,
+              ListTile(
+                leading: Icon(
+                  Icons.playlist_play,
+                  size: 40.0,
+                ),
+                title: Text("Playlists"),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    buildContext,
+                    MaterialPageRoute(builder: (buildContext) => PlaylistScreen()),
+                  );
+                },
               ),
-              title: Text("Network Devices"),
-              onTap: () {
-                Navigator.pushReplacement(
-                    buildContext, MaterialPageRoute(builder: (buildContext) => LocalNetworkScreen()));
-              },
-            )
-          ],
-        ));
+              ListTile(
+                leading: Icon(
+                  Icons.devices,
+                  size: 40.0,
+                ),
+                title: Text("Network Devices"),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    buildContext,
+                    MaterialPageRoute(builder: (buildContext) => LocalNetworkScreen()),
+                  );
+                },
+              )
+            ],
+          ),
+        );
+}
+
+class RobeatsSlideUpPanel extends StatelessWidget {
+  final _panelController = PanelController();
+  final Widget _body;
+
+  RobeatsSlideUpPanel(this._body);
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaLibrary = MediaLibrary();
+    mediaLibrary.playerStateData.currentSongStream.listen((song) {
+      if (song != null && !_panelController.isPanelShown()) {
+        _panelController.show();
+      } else if (_panelController.isPanelShown() && mediaLibrary.songQueue.isEmpty && song == null) {
+        _panelController.hide();
+      }
+    });
+
+    mediaLibrary.playerStateData.songQueueStream.listen((songQueue) {
+      if (songQueue.isNotEmpty && !_panelController.isPanelShown()) {
+        _panelController.show();
+      }
+    });
+
+    return Material(
+      child: SlidingUpPanel(
+        minHeight: 72.0,
+        margin: EdgeInsets.all(0.0),
+        padding: EdgeInsets.all(0.0),
+        renderPanelSheet: false,
+        controller: _panelController,
+        maxHeight: MediaQuery.of(context).size.height,
+        panel: PlayScreen(),
+        collapsed: PlayingBottomSheet(),
+        color: Colors.white,
+        body: _body,
+      ),
+    );
+  }
 }
 
 class SemiCircleBorder extends CircleBorder {
@@ -81,10 +139,12 @@ class SemiCircleBorder extends CircleBorder {
     double fraction = _calculateWidthFraction(rect);
 
     return Path()
-      ..addOval(Rect.fromCircle(
-        center: Offset(radius * fraction, 0),
-        radius: rect.shortestSide,
-      ));
+      ..addOval(
+        Rect.fromCircle(
+          center: Offset(radius * fraction, 0),
+          radius: rect.shortestSide,
+        ),
+      );
   }
 
   @override
@@ -93,9 +153,11 @@ class SemiCircleBorder extends CircleBorder {
     double fraction = _calculateWidthFraction(rect);
 
     return Path()
-      ..addOval(Rect.fromCircle(
-        center: Offset(radius * fraction, 0),
-        radius: max(0.0, rect.shortestSide - side.width),
-      ));
+      ..addOval(
+        Rect.fromCircle(
+          center: Offset(radius * fraction, 0),
+          radius: max(0.0, rect.shortestSide - side.width),
+        ),
+      );
   }
 }
