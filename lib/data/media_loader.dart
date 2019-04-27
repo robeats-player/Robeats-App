@@ -22,14 +22,17 @@ class MediaLoader {
   }
 
   /// Get the [Directory] that music is all saved to.
+  /// If it does not exist, create it.
   /// Async, as path_provider dictates.
   static Future<Directory> get directory async {
     Directory appDataDirectory = await getApplicationDocumentsDirectory();
-    var dir = new Directory(appDataDirectory.path + "/" + "music");
-    dir.exists().then((exists) {
-      if (!exists) dir.create(recursive: false);
-    });
-    return dir;
+    appDataDirectory = new Directory(appDataDirectory.path + "/" + "music");
+
+    if(!appDataDirectory.existsSync()) {
+      appDataDirectory.create(recursive: false);
+    }
+
+    return appDataDirectory;
   }
 
   /// Utility function - returns the file name based on a [FileSystemEntity]'s path.
