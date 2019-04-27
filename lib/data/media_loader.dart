@@ -25,7 +25,11 @@ class MediaLoader {
   /// Async, as path_provider dictates.
   static Future<Directory> get directory async {
     Directory appDataDirectory = await getApplicationDocumentsDirectory();
-    return Directory(appDataDirectory.path + "/" + "music");
+    var dir = new Directory(appDataDirectory.path + "/" + "music");
+    dir.exists().then((exists) {
+      if (!exists) dir.create(recursive: false);
+    });
+    return dir;
   }
 
   /// Utility function - returns the file name based on a [FileSystemEntity]'s path.
