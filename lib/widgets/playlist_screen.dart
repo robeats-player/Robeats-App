@@ -8,21 +8,35 @@ class PlaylistScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final MediaLibrary mediaLibrary = MediaLibrary();
 
-    List<Widget> widgets = mediaLibrary.mediaLoader.playlistSet.map((playlist) {
-      return _PlaylistGridTile(playlist);
-    }).toList();
-
     return RobeatsSlideUpPanel(
       Scaffold(
         appBar: RobeatsAppBar(),
         drawer: RobeatsDrawer(context),
-        body: GridView.count(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10.0,
-          children: widgets,
+        body: StreamBuilder(
+          stream: mediaLibrary.mediaLoader.loaderData.playlistSetStream,
+          builder: (_, AsyncSnapshot<Set<Playlist>> snapshot) {
+            Set<Playlist> playlists = snapshot.data;
+
+            return GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10.0,
+              children: _prepareWidgets(snapshot),
+            );
+          },
         ),
       ),
     );
+  }
+
+  List<Widget> _prepareWidgets(AsyncSnapshot<Set<Playlist>> snapshot) {
+    Set<Playlist> playlists = snapshot.data;
+    List<Widget> widgets = [];
+
+    if(playlists != null) {
+      widgets = playlists.map((playlist) => _PlaylistGridTile(playlist)).toList();
+    }
+
+    return widgets;
   }
 }
 

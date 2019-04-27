@@ -2,16 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:Robeats/data/streams/loader_data.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dart_tags/dart_tags.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MediaLoader {
+  LoaderData _loaderData = LoaderData();
   List<Song> _songList = List();
   Set<Playlist> _playlistSet = Set();
 
   MediaLoader();
+
+  LoaderData get loaderData => _loaderData;
 
   List<Song> get songList => _songList;
 
@@ -76,6 +80,7 @@ class MediaLoader {
         String hash = md5.convert(entity.readAsBytesSync()).toString();
 
         _songList.add(Song(fileName, songTitle, hash, artist, null));
+        _loaderData.songListStream.add(_songList);
       }
     }
   }
@@ -100,6 +105,7 @@ class MediaLoader {
       List<Song> songs = _songList.where((song) => songHashes.contains(song.hash)).toList();
 
       _playlistSet.add(Playlist(playlist.key, songs));
+      _loaderData.playlistSetStream.add(_playlistSet);
     }
   }
 }
