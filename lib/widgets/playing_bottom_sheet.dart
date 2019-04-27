@@ -32,8 +32,8 @@ class _PlayingContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MediaLibrary mediaLibrary = MediaLibrary();
-    String title = (_song.title ??= "Unreadable");
-    String artist = (_song.artist ??= "Unreadable");
+    String title = _song.title ?? "Unreadable";
+    String artist = _song.artist ?? "Unreadable";
 
     return Container(
       color: Colors.white,

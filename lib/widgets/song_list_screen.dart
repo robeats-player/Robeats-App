@@ -15,13 +15,18 @@ class SongListScreen extends StatelessWidget {
     return RobeatsSlideUpPanel(
       StreamBuilder<Song>(
         stream: mediaLibrary.playerStateData.currentSongStream,
-        builder: (_, s) {
+        builder: (_, currentSongSnapshot) {
           return Scaffold(
             appBar: RobeatsAppBar(),
             drawer: RobeatsDrawer(context),
-            body: ListView(
-              padding: EdgeInsets.only(top: 5.0),
-              children: _SongListTile.prepareTiles(mediaLibrary.mediaLoader.songList, s.data),
+            body: StreamBuilder(
+              stream: mediaLibrary.mediaLoader.loaderData.songListStream,
+              builder: (_, AsyncSnapshot<List<Song>> songListSnapshot) {
+                return ListView(
+                  padding: EdgeInsets.only(top: 5.0),
+                  children: _SongListTile.prepareTiles(songListSnapshot.data, currentSongSnapshot.data),
+                );
+              }
             ),
             floatingActionButton: FloatingActionButton(
               child: Icon(Icons.queue_music, color: RobeatsThemeData.PRIMARY),
@@ -60,6 +65,9 @@ class _SongListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String title = _song?.title ?? "Unreadable";
+    String artist = _song?.artist ?? "Unreadble";
+
     return Container(
       margin: EdgeInsets.only(top: 5.0),
       decoration: BoxDecoration(
@@ -73,8 +81,8 @@ class _SongListTile extends StatelessWidget {
       child: ListTile(
         selected: _current,
         leading: Icon(Icons.music_note),
-        title: Text("${_song.title}"),
-        subtitle: Text("${_song.artist}"),
+        title: Text("$title"),
+        subtitle: Text("$artist"),
         trailing: Container(
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -109,11 +117,9 @@ class _SongListTile extends StatelessWidget {
 
 class _QueueTile extends StatelessWidget {
   static int _index = 0;
-  Song _song;
+  final Song _song;
 
-  _QueueTile(Song song) {
-    this._song = song;
-  }
+  _QueueTile(this._song);
 
   @override
   Widget build(BuildContext context) {
