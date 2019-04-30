@@ -1,4 +1,5 @@
 import 'package:Robeats/data/media_library.dart';
+import 'package:Robeats/main.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,13 @@ class PlaylistScreen extends StatelessWidget {
             );
           },
         ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.playlist_add, color: RobeatsThemeData.PRIMARY),
+          onPressed: () {
+            showDialog(context: context, builder: (_) => _CreatePlaylistDialog());
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       ),
     );
   }
@@ -75,4 +83,10 @@ class _PlaylistGridTile extends StatelessWidget {
       ),
     );
   }
+}
+
+class _CreatePlaylistDialog extends AlertInputDialog {
+  static const String QUESTION = "Playlist name?";
+
+  _CreatePlaylistDialog() : super(QUESTION);
 }

@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/main.dart';
@@ -112,6 +112,31 @@ class RobeatsSlideUpPanel extends StatelessWidget {
   }
 }
 
+class AlertInputDialog extends StatelessWidget {
+  final TextEditingController _controller = TextEditingController();
+  final String _text;
+
+  AlertInputDialog(this._text);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(_text),
+      content: TextField(
+        controller: _controller,
+      ),
+      actions: <Widget>[
+        new FlatButton(
+          child: new Text('CANCEL'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        )
+      ],
+    );
+  }
+}
+
 class SemiCircleBorder extends CircleBorder {
   MediaQueryData _data;
 
@@ -156,7 +181,7 @@ class SemiCircleBorder extends CircleBorder {
       ..addOval(
         Rect.fromCircle(
           center: Offset(radius * fraction, 0),
-          radius: max(0.0, rect.shortestSide - side.width),
+          radius: math.max(0.0, rect.shortestSide - side.width),
         ),
       );
   }

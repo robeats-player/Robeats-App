@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/structures/data_structures/stream_queue.dart';
@@ -34,7 +32,7 @@ class SongListScreen extends StatelessWidget {
                 showModalBottomSheet(context: context, builder: (_) => _QueueBottomSheet());
               },
             ),
-            floatingActionButtonLocation: CustomEndFloatFloatingActionButtonLocation(),
+            floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
           );
         },
       ),
@@ -162,29 +160,5 @@ class _QueueTile extends StatelessWidget {
     } else {
       return [];
     }
-  }
-}
-
-class CustomEndFloatFloatingActionButtonLocation extends FloatingActionButtonLocation {
-  @override
-  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
-    // Compute the x-axis offset.
-    final double fabX = scaffoldGeometry.scaffoldSize.width -
-        kFloatingActionButtonMargin -
-        scaffoldGeometry.minInsets.right -
-        scaffoldGeometry.floatingActionButtonSize.width;
-
-    // Compute the y-axis offset.
-    final double contentBottom = scaffoldGeometry.contentBottom;
-    final double bottomSheetHeight = scaffoldGeometry.bottomSheetSize.height;
-    final double fabHeight = scaffoldGeometry.floatingActionButtonSize.height;
-    final double snackBarHeight = scaffoldGeometry.snackBarSize.height;
-
-    double fabY = contentBottom - fabHeight - kFloatingActionButtonMargin;
-    if (snackBarHeight > 0.0)
-      fabY = math.min(fabY, contentBottom - snackBarHeight - fabHeight - kFloatingActionButtonMargin);
-    if (bottomSheetHeight > 0.0) fabY = math.min(fabY, contentBottom - bottomSheetHeight - fabHeight - 10);
-
-    return Offset(fabX, fabY);
   }
 }
