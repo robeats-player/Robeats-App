@@ -18,14 +18,18 @@ class Song {
     this.duration = duration;
   }
 
-  /// Retrieve the directory of the song.
+  /**
+   * Retrieve the directory of the song.
+   */
   Future<String> get directory async {
     String path = (await MediaLoader.directory).path;
     return path + "/$_fileName";
   }
 
-  /// Override of the equals operator. This works by checking that the hash
-  /// of the song's mp3 file is equal.
+  /**
+   * Override of the equals operator. This works by checking that the hash
+   * of the song's mp3 file is equal.
+   */
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is Song && runtimeType == other.runtimeType && hash == other.hash;
@@ -40,7 +44,9 @@ class Playlist extends JsonSerialisable {
 
   Playlist(this.identifier, this.songs);
 
-  /// Serialise a [Playlist] into a Json string.
+  /**
+   * Serialise a [Playlist] into a Json string.
+   */
   Map<String, dynamic> serialise() {
     return <String, dynamic>{
       "songs": songs.map((s) => s.hash).toList(growable: false),
@@ -60,8 +66,10 @@ class Playlist extends JsonSerialisable {
     jsonManager.saveFile("playlists", jsonObject);
   }
 
-  /// Override of the equals operator. This works by checking the identifier
-  /// (name) of the playlist, and the data structure holding all its [Song]s.
+  /**
+   * Override of the equals operator. This works by checking the identifier
+   * (name) of the playlist, and the data structure holding all its [Song]s.
+   */
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||

@@ -30,9 +30,11 @@ class MediaLoader {
     return _songList.elementAt(new Random().nextInt(_songList.length));
   }
 
-  /// Get the [Directory] that music is all saved to.
-  /// If it does not exist, create it.
-  /// Async, as path_provider dictates.
+  /**
+   * Get the [Directory] that music is all saved to.
+   * If it does not exist, create it.
+   * Async, as path_provider dictates.
+   */
   static Future<Directory> get directory async {
     Directory appDataDirectory = await getApplicationDocumentsDirectory();
     appDataDirectory = new Directory(appDataDirectory.path + "/" + "music");
@@ -44,17 +46,21 @@ class MediaLoader {
     return appDataDirectory;
   }
 
-  /// Utility function - returns the file name based on a [FileSystemEntity]'s path.
-  /// E.g. /a/b/c/song.mp3 would return song.mp3
+  /**
+   * Utility function - returns the file name based on a [FileSystemEntity]'s path.
+   * E.g. /a/b/c/song.mp3 would return song.mp3
+   */
   static String _getFileName(FileSystemEntity entity) {
     return entity.path
         .split('/')
         .last;
   }
 
-  /// Utility function - returns the ID3 [Tag] based on a song. Depending on
-  /// the tag type used, either is returned. This could either be ID3v1 or
-  /// ID3v2.
+  /**
+   * Utility function - returns the ID3 [Tag] based on a song. Depending on
+   * the tag type used, either is returned. This could either be ID3v1 or
+   * ID3v2.
+   */
   static Future<Tag> _metaTags(File file) async {
     TagProcessor tagProcessor = TagProcessor();
     List<Tag> tags = await tagProcessor.getTagsFromByteArray(
@@ -73,14 +79,18 @@ class MediaLoader {
     _jsonManager = jsonManager;
   }
 
-  /// Load all songs & playlists.
+  /**
+   * Load all songs & playlists.
+   */
   Future<void> load() async {
     await _loadSongs().then((_) => _loadPlaylists());
   }
 
-  /// (Recursively) loop through all files of the [Directory]. Any files
-  /// with type .mp3 will be loaded, tags read, [Song] objects created
-  /// and added to the [_songList].
+  /**
+   * (Recursively) loop through all files of the [Directory]. Any files
+   * with type .mp3 will be loaded, tags read, [Song] objects created
+   * and added to the [_songList].
+   */
   Future<void> _loadSongs() async {
     List<FileSystemEntity> entities = (await directory).listSync(recursive: true);
 
@@ -99,9 +109,11 @@ class MediaLoader {
     }
   }
 
-  /// Loop through all playlists in the _playlists.json file. Any songs
-  /// whose hash is in the list 'songs' will be added the the [Playlist].
-  /// This [Playlist] will be added to [_playlistSet]
+  /**
+   * Loop through all playlists in the _playlists.json file. Any songs
+   * whose hash is in the list 'songs' will be added the the [Playlist].
+   * This [Playlist] will be added to [_playlistSet]
+   */
   Future<void> _loadPlaylists() async {
     Map<String, dynamic> playlists = await _jsonManager.decodeFile("playlists");
 

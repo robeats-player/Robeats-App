@@ -35,8 +35,10 @@ class MediaLibrary {
 
   Song get currentlyPlayingSong => _playerStateData.currentSongStream.value;
 
-  /// Listens to the stream for duration changes, and send it to the sink of
-  /// the [SongStateDataController] to update the UI.
+  /**
+   * Listens to the stream for duration changes, and send it to the sink of
+   * the [SongStateDataController] to update the UI.
+   */
   void _initialiseAudioEvents() {
     _audioPlayer.onAudioPositionChanged.listen((duration) {
       double durationFraction = 0;
@@ -61,17 +63,19 @@ class MediaLibrary {
     });
   }
 
-  /// This loads the URL of the [Song], by getting its [Directory].
-  /// Once the song is played, the [_currentlyPlayingSong] is set to it,
-  /// and added to the [SongStateDataController]'s sink.
-  ///
-  /// The song is added to the stack, so when the previous button is pressed,
-  /// the top of the stack can simply be popped. The optional parameter stack
-  /// describes whether it should be pushed or not - the notable case where
-  /// it wouldn't, is where we are playing the previous song; to avoid a loop.
-  ///
-  /// Furthermore, the [Song]'s [Duration] has now been by audioplayers and can
-  /// be set.
+  /**
+   * This loads the URL of the [Song], by getting its [Directory].
+   * Once the song is played, the [_currentlyPlayingSong] is set to it,
+   * and added to the [SongStateDataController]'s sink.
+   *
+   * The song is added to the stack, so when the previous button is pressed,
+   * the top of the stack can simply be popped. The optional parameter stack
+   * describes whether it should be pushed or not - the notable case where
+   * it wouldn't, is where we are playing the previous song; to avoid a loop.
+   *
+   * Furthermore, the [Song]'s [Duration] has now been by audioplayers and can
+   * be set.
+   */
   void playSong(Song song, [bool stack = true]) async {
     String url = await song.directory;
 
@@ -85,8 +89,10 @@ class MediaLibrary {
     song.duration ??= await _audioPlayer.onDurationChanged.first;
   }
 
-  /// Play all songs in the [Queue]. The queue can be added to from the songs
-  /// list screen.
+  /**
+   * Play all songs in the [Queue]. The queue can be added to from the songs
+   * list screen.
+   */
   void playQueue() {
     if (_songQueue.isNotEmpty) {
       Song song = _songQueue.removeFirst();
@@ -94,8 +100,10 @@ class MediaLibrary {
     }
   }
 
-  /// Clear the [Queue] and add all songs from a [Playlist] to the
-  /// [_songQueue].
+  /**
+   * Clear the [Queue] and add all songs from a [Playlist] to the
+   * [_songQueue].
+   */
   void playPlaylist(Playlist playlist) {
     _songQueue.clear();
     _songQueue.addAll(playlist.songs);
@@ -103,12 +111,14 @@ class MediaLibrary {
     playQueue();
   }
 
-  /// 'state' refers to the [AudioPlayer]'s current [AudioPlayerState].
-  /// This could describe a song either: Stopped, Playing, Paused, or
-  /// Completed.
-  ///
-  /// If the state is PLAYING, then this pauses the song. If the song is
-  /// PAUSED, then it must be resumed.
+  /**
+   * 'state' refers to the [AudioPlayer]'s current [AudioPlayerState].
+   * This could describe a song either: Stopped, Playing, Paused, or
+   * Completed.
+   *
+   * If the state is PLAYING, then this pauses the song. If the song is
+   * PAUSED, then it must be resumed.
+   */
   void toggleState() {
     AudioPlayerState state = _audioPlayer.state;
 
@@ -126,11 +136,13 @@ class MediaLibrary {
     }
   }
 
-  /// This stops the song. It calls [AudioPlayer]'s pause stop method,
-  /// and releases its resources, in case that no other songs will be played.
-  ///
-  /// Furthermore, the variable [_currentlyPlayingSong] and the sink in
-  /// [SongStateDataController] are returned to their original state: null.
+  /**
+   * This stops the song. It calls [AudioPlayer]'s pause stop method,
+   * and releases its resources, in case that no other songs will be played.
+   *
+   * Furthermore, the variable [_currentlyPlayingSong] and the sink in
+   * [SongStateDataController] are returned to their original state: null.
+   */
   void stop() {
     _audioPlayer.stop();
     _audioPlayer.release();
@@ -139,7 +151,9 @@ class MediaLibrary {
     _playerStateData.songDurationStream.add(0);
   }
 
-  /// Pop the last element from the stack, and if it's not null, play it.
+  /**
+   * Pop the last element from the stack, and if it's not null, play it.
+   */
   void playPrevious() {
     Song song = _songStack.pop();
 
@@ -148,9 +162,11 @@ class MediaLibrary {
     }
   }
 
-  /// If the [Queue] is not empty, play the next song. If it is empty and
-  /// the user is currently playing another song, play the next one. If
-  /// they are not currently playing a song, play a random song.
+  /**
+   * If the [Queue] is not empty, play the next song. If it is empty and
+   * the user is currently playing another song, play the next one. If
+   * they are not currently playing a song, play a random song.
+   */
   void playNext() {
     if (_songQueue.isNotEmpty) {
       playQueue();
@@ -171,11 +187,13 @@ class MediaLibrary {
     playSong(song);
   }
 
-  /// Seeks the current position in the song (i.e. the cursor) to a fraction
-  /// of the total duration.
-  /// Null checks must be done on totalDuration, as if no song is playing, or
-  /// it's not loaded - due to it being async, it will return null. If it is
-  /// null no seeking will be done.
+  /**
+   * Seeks the current position in the song (i.e. the cursor) to a fraction
+   * of the total duration.
+   * Null checks must be done on totalDuration, as if no song is playing, or
+   * it's not loaded - due to it being async, it will return null. If it is
+   * null no seeking will be done.
+   */
   void seekFraction(double fraction) async {
     Duration totalDuration = currentlyPlayingSong?.duration;
 
@@ -185,11 +203,13 @@ class MediaLibrary {
     }
   }
 
-  /// Seeks the current position in the song (i.e. the cursor) to a specific
-  /// [Duration].
-  ///
-  /// All checks for time extending the song's length are done
-  /// by audioplayers.
+  /**
+   * Seeks the current position in the song (i.e. the cursor) to a specific
+   * [Duration].
+   *
+   * All checks for time extending the song's length are done
+   * by audioplayers.
+   */
   void seekTime(Duration duration) {
     _audioPlayer.seek(duration);
   }

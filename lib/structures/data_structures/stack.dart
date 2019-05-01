@@ -1,8 +1,10 @@
 import 'dart:collection';
 
-/// The purpose of this class is slightly trivial and unnecessary, however
-/// using a list, and pretending it's a stack is confusing at times. Simply
-/// having a class, albeit a wrapper class, for a stack is helpful.
+/**
+ * The purpose of this class is slightly trivial and unnecessary, however
+ * using a list, and pretending it's a stack is confusing at times. Simply
+ * having a class, albeit a wrapper class, for a stack is helpful.
+ */
 class Stack<T> {
   Queue<T> _queue = Queue();
 

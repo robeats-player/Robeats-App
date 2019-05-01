@@ -29,7 +29,7 @@ class RobeatsThemeData {
   static const Color TEXT_COLOUR_INVERSE = Colors.black;
   static ThemeData _instance;
 
-  /// Cannot be instantiated.
+  // Cannot be instantiated.
   RobeatsThemeData._private();
 
   static ThemeData getThemeData() {
