@@ -1,4 +1,7 @@
+import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/data/media_loader.dart';
+import 'package:Robeats/persistance/json/json_manager.dart';
+import 'package:Robeats/persistance/json/json_serialisable.dart';
 
 class Song {
   String _fileName;
@@ -31,11 +34,31 @@ class Song {
   int get hashCode => hash.hashCode;
 }
 
-class Playlist {
+class Playlist extends JsonSerialisable {
   String identifier;
   List<Song> songs;
 
   Playlist(this.identifier, this.songs);
+
+  /// Serialise a [Playlist] into a Json string.
+  Map<String, dynamic> serialise() {
+    return <String, dynamic>{
+      "songs": songs.map((s) => s.hash).toList(growable: false),
+    };
+  }
+
+  void save() async {
+    MediaLoader mediaLoader = MediaLibrary().mediaLoader;
+    Set<Playlist> playlistSet = mediaLoader.playlistSet;
+    JsonManager jsonManager = mediaLoader.jsonManager;
+    Map<String, dynamic> jsonObject = (await jsonManager.decodeFile("playlists")) ?? {};
+
+    playlistSet.add(this);
+    mediaLoader.loaderData.playlistSetStream.add(playlistSet);
+
+    jsonObject[identifier] = serialise();
+    jsonManager.saveFile("playlists", jsonObject);
+  }
 
   /// Override of the equals operator. This works by checking the identifier
   /// (name) of the playlist, and the data structure holding all its [Song]s.

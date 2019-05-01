@@ -18,14 +18,13 @@ class SongListScreen extends StatelessWidget {
             appBar: RobeatsAppBar(),
             drawer: RobeatsDrawer(context),
             body: StreamBuilder(
-              stream: mediaLibrary.mediaLoader.loaderData.songListStream,
-              builder: (_, AsyncSnapshot<List<Song>> songListSnapshot) {
-                return ListView(
-                  padding: EdgeInsets.only(top: 5.0),
-                  children: _SongListTile.prepareTiles(songListSnapshot.data, currentSongSnapshot.data),
-                );
-              }
-            ),
+                stream: mediaLibrary.mediaLoader.loaderData.songListStream,
+                builder: (_, AsyncSnapshot<List<Song>> songListSnapshot) {
+                  return ListView(
+                    padding: EdgeInsets.only(top: 5.0),
+                    children: _SongListTile.prepareTiles(songListSnapshot.data, currentSongSnapshot.data),
+                  );
+                }),
             floatingActionButton: FloatingActionButton(
               child: Icon(Icons.queue_music, color: RobeatsThemeData.PRIMARY),
               onPressed: () {

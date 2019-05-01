@@ -40,7 +40,7 @@ class PlaylistScreen extends StatelessWidget {
     Set<Playlist> playlists = snapshot.data;
     List<Widget> widgets = [];
 
-    if(playlists != null) {
+    if (playlists != null) {
       widgets = playlists.map((playlist) => _PlaylistGridTile(playlist)).toList();
     }
 
@@ -87,6 +87,8 @@ class _PlaylistGridTile extends StatelessWidget {
 
 class _CreatePlaylistDialog extends AlertInputDialog {
   static const String QUESTION = "Playlist name?";
+  static const String ACCEPT = "Create Playlist";
+  static final Function(String) _callback = ((text) => Playlist(text, []).save());
 
-  _CreatePlaylistDialog() : super(QUESTION);
+  _CreatePlaylistDialog() : super(QUESTION, ACCEPT, _callback);
 }

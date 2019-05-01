@@ -1,19 +1,24 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:Robeats/data/streams/loader_data.dart';
+import 'package:Robeats/persistance/json/json_manager.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dart_tags/dart_tags.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MediaLoader {
+  JsonManager _jsonManager;
   LoaderData _loaderData = LoaderData();
   List<Song> _songList = List();
   Set<Playlist> _playlistSet = Set();
 
-  MediaLoader();
+  MediaLoader() {
+    _initialiseJsonManager();
+  }
+
+  JsonManager get jsonManager => _jsonManager;
 
   LoaderData get loaderData => _loaderData;
 
@@ -32,7 +37,7 @@ class MediaLoader {
     Directory appDataDirectory = await getApplicationDocumentsDirectory();
     appDataDirectory = new Directory(appDataDirectory.path + "/" + "music");
 
-    if(!appDataDirectory.existsSync()) {
+    if (!appDataDirectory.existsSync()) {
       appDataDirectory.create(recursive: false);
     }
 
@@ -57,6 +62,15 @@ class MediaLoader {
     );
 
     return tags.firstWhere((tag) => tag != null && tag.tags.isNotEmpty, orElse: () => null);
+  }
+
+  void _initialiseJsonManager() async {
+    JsonManager jsonManager = JsonManager();
+    Directory dir = await directory;
+
+    jsonManager.addFile("playlists", File(dir.path + '/_playlists.json'));
+
+    _jsonManager = jsonManager;
   }
 
   /// Load all songs & playlists.
@@ -89,16 +103,9 @@ class MediaLoader {
   /// whose hash is in the list 'songs' will be added the the [Playlist].
   /// This [Playlist] will be added to [_playlistSet]
   Future<void> _loadPlaylists() async {
-    Directory dir = await directory;
-    File file = File(dir.path + "/_playlists.json");
+    Map<String, dynamic> playlists = await _jsonManager.decodeFile("playlists");
 
-    if (!file.existsSync()) {
-      return;
-    }
-
-    Map<String, dynamic> json = jsonDecode(file.readAsStringSync());
-
-    for (MapEntry<String, dynamic> playlist in json.entries) {
+    for (MapEntry<String, dynamic> playlist in playlists.entries) {
       Map<String, dynamic> innerMap = playlist.value;
       List<String> songHashes = List<String>.from(innerMap['songs']);
 

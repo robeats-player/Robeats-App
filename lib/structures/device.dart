@@ -20,6 +20,5 @@ class Device {
 
 /// A [Device] that is not local, and can - therefore, be synced to.
 class ForeignDevice extends Device {
-  ForeignDevice(int id, DeviceType deviceType, String chosenIdentifier)
-      : super(id, chosenIdentifier);
+  ForeignDevice(int id, DeviceType deviceType, String chosenIdentifier) : super(id, chosenIdentifier);
 }
