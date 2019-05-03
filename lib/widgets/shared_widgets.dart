@@ -112,41 +112,6 @@ class RobeatsSlideUpPanel extends StatelessWidget {
   }
 }
 
-class AlertInputDialog extends StatelessWidget {
-  final TextEditingController _controller = TextEditingController();
-  final String _title;
-  final String _acceptLabel;
-  final Function(String) _callback;
-
-  AlertInputDialog(this._title, this._acceptLabel, this._callback);
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(_title),
-      content: TextField(
-        controller: _controller,
-      ),
-      actions: <Widget>[
-        FlatButton(
-          child: new Text('Cancel'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        FlatButton(
-            child: new Text(_acceptLabel),
-            onPressed: () {
-              if (_controller.text != null) {
-                Navigator.of(context).pop();
-                _callback(_controller.text);
-              }
-            }),
-      ],
-    );
-  }
-}
-
 class SemiCircleBorder extends CircleBorder {
   MediaQueryData _data;
 
