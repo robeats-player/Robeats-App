@@ -2,7 +2,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:Robeats/data/streams/loader_data.dart';
-import 'package:Robeats/persistance/json/json_manager.dart';
+import 'package:Robeats/persistence/json/json_manager.dart';
+import 'package:Robeats/persistence/json/structures/json_file.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dart_tags/dart_tags.dart';
@@ -13,10 +14,6 @@ class MediaLoader {
   LoaderData _loaderData = LoaderData();
   List<Song> _songList = List();
   Set<Playlist> _playlistSet = Set();
-
-  MediaLoader() {
-    _initialiseJsonManager();
-  }
 
   JsonManager get jsonManager => _jsonManager;
 
@@ -71,19 +68,18 @@ class MediaLoader {
   }
 
   void _initialiseJsonManager() async {
-    JsonManager jsonManager = JsonManager();
-    Directory dir = await directory;
+    List<String> files = <String>[
+      "_playlists.json",
+    ];
 
-    jsonManager.addFile("playlists", File(dir.path + '/_playlists.json'));
-
-    _jsonManager = jsonManager;
+    _jsonManager = JsonManager(await directory, files);
   }
 
   /**
    * Load all songs & playlists.
    */
   Future<void> load() async {
-    await _loadSongs().then((_) => _loadPlaylists());
+    await _loadSongs().then((_) => _initialiseJsonManager()).then((_) => _loadPlaylists());
   }
 
   /**
@@ -115,15 +111,12 @@ class MediaLoader {
    * This [Playlist] will be added to [_playlistSet]
    */
   Future<void> _loadPlaylists() async {
-    Map<String, dynamic> playlists = await _jsonManager.decodeFile("playlists");
+    JsonFile playlists = _jsonManager.jsonFiles['_playlists.json'];
 
-    for (MapEntry<String, dynamic> playlist in playlists.entries) {
-      Map<String, dynamic> innerMap = playlist.value;
-      List<String> songHashes = List<String>.from(innerMap['songs']);
+    for (MapEntry<String, dynamic> entry in playlists.data.entries) {
+      Playlist playlist = Playlist.deserialise(entry.key, entry.value);
 
-      List<Song> songs = _songList.where((song) => songHashes.contains(song.hash)).toList();
-
-      _playlistSet.add(Playlist(playlist.key, songs));
+      _playlistSet.add(playlist);
       _loaderData.playlistSetStream.add(_playlistSet);
     }
   }

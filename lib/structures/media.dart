@@ -1,7 +1,7 @@
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/data/media_loader.dart';
-import 'package:Robeats/persistance/json/json_manager.dart';
-import 'package:Robeats/persistance/json/json_serialisable.dart';
+import 'package:Robeats/persistence/json/structures/json_file.dart';
+import 'package:Robeats/persistence/json/structures/json_serialisable.dart';
 
 class Song {
   String _fileName;
@@ -45,6 +45,17 @@ class Playlist extends JsonSerialisable {
   Playlist(this.identifier, this.songs);
 
   /**
+   * Deserialise  a [Playlist] from its Json [Map].
+   */
+  factory Playlist.deserialise(String identifier, Map<String, dynamic> serialised) {
+    MediaLoader mediaLoader = MediaLibrary().mediaLoader;
+    List<String> hashes = serialised['songs'];
+
+    List<Song> songs = mediaLoader.songList.where((song) => hashes.contains(song.hash));
+    return Playlist(identifier, songs);
+  }
+
+  /**
    * Serialise a [Playlist] into a Json string.
    */
   Map<String, dynamic> serialise() {
@@ -56,14 +67,13 @@ class Playlist extends JsonSerialisable {
   void save() async {
     MediaLoader mediaLoader = MediaLibrary().mediaLoader;
     Set<Playlist> playlistSet = mediaLoader.playlistSet;
-    JsonManager jsonManager = mediaLoader.jsonManager;
-    Map<String, dynamic> jsonObject = (await jsonManager.decodeFile("playlists")) ?? {};
+    JsonFile file = mediaLoader.jsonManager.jsonFiles['_playlists.json'];
 
     playlistSet.add(this);
     mediaLoader.loaderData.playlistSetStream.add(playlistSet);
 
-    jsonObject[identifier] = serialise();
-    jsonManager.saveFile("playlists", jsonObject);
+    file.put(identifier, this);
+    file.saveFile();
   }
 
   /**
