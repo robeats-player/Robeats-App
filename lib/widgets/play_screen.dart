@@ -15,7 +15,10 @@ class PlayScreen extends StatelessWidget {
       Expanded(flex: 75, child: _NextQueueSong()),
     ];
 
-    return DefaultScaffold(Column(children: children), appBar: _prepareAppBar());
+    return Scaffold(
+      appBar: _prepareAppBar(),
+      body: Column(children: children),
+    );
   }
 
   AppBar _prepareAppBar() {

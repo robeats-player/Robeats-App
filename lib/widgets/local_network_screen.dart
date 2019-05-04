@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 class LocalNetworkScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return RobeatsSlideUpPanel(
-      DefaultScaffold(
-        Padding(
-          padding: EdgeInsets.only(top: 10.0),
-          child: _createGridView(),
-        ),
+    return DefaultScaffold(
+      Padding(
+        padding: EdgeInsets.only(top: 10.0),
+        child: _createGridView(),
       ),
     );
   }
