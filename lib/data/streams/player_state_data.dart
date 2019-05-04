@@ -16,4 +16,9 @@ class PlayerStateData {
   BehaviorSubject<AudioPlayerState> get songStateStream => _songStateStream;
 
   BehaviorSubject<StreamQueue<Song>> get songQueueStream => _songQueueStream;
+
+  PlayerStateData() {
+    //Trigger initial update to all listeners
+    _currentSongStream.add(null);
+  }
 }

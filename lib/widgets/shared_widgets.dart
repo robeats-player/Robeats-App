@@ -93,19 +93,18 @@ class RobeatsSlideUpPanel extends StatelessWidget {
       }
     });
 
-    return Material(
-      child: SlidingUpPanel(
-        minHeight: 72.0,
-        margin: EdgeInsets.all(0.0),
-        padding: EdgeInsets.all(0.0),
-        renderPanelSheet: false,
-        controller: _panelController,
-        maxHeight: MediaQuery.of(context).size.height,
-        panel: PlayScreen(),
-        collapsed: PlayingBottomSheet(),
-        color: Colors.white,
-        body: _body,
-      ),
+    return SlidingUpPanel(
+      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+      minHeight: 90,
+      margin: EdgeInsets.only(bottom: 8.0),
+      padding: EdgeInsets.all(0.0),
+      renderPanelSheet: false,
+      controller: _panelController,
+      maxHeight: MediaQuery.of(context).size.height,
+      panel: PlayScreen(),
+      collapsed: PlayingBottomSheet(),
+      color: Colors.transparent,
+      body: _body,
     );
   }
 }
@@ -124,8 +123,7 @@ class DefaultScaffold extends StatelessWidget {
     return Scaffold(
       appBar: appBar ?? RobeatsAppBar(),
       drawer: drawer ?? RobeatsDrawer(),
-      bottomSheet: PlayingBottomSheet(),
-      body: body,
+      body: RobeatsSlideUpPanel(this.body),
       floatingActionButton: floatingActionButton,
       floatingActionButtonLocation: floatingActionButtonLocation,
     );

@@ -8,18 +8,16 @@ class PlaylistScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final MediaLibrary mediaLibrary = MediaLibrary();
 
-    return RobeatsSlideUpPanel(
-      DefaultScaffold(
-        StreamBuilder(
-          stream: mediaLibrary.mediaLoader.loaderData.playlistSetStream,
-          builder: (_, AsyncSnapshot<Set<Playlist>> snapshot) {
-            return GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10.0,
-              children: _prepareWidgets(snapshot),
-            );
-          },
-        ),
+    return DefaultScaffold(
+      StreamBuilder(
+        stream: mediaLibrary.mediaLoader.loaderData.playlistSetStream,
+        builder: (_, AsyncSnapshot<Set<Playlist>> snapshot) {
+          return GridView.count(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10.0,
+            children: _prepareWidgets(snapshot),
+          );
+        },
       ),
     );
   }
