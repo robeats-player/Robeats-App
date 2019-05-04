@@ -9,14 +9,10 @@ class PlaylistScreen extends StatelessWidget {
     final MediaLibrary mediaLibrary = MediaLibrary();
 
     return RobeatsSlideUpPanel(
-      Scaffold(
-        appBar: RobeatsAppBar(),
-        drawer: RobeatsDrawer(context),
-        body: StreamBuilder(
+      DefaultScaffold(
+        StreamBuilder(
           stream: mediaLibrary.mediaLoader.loaderData.playlistSetStream,
           builder: (_, AsyncSnapshot<Set<Playlist>> snapshot) {
-            Set<Playlist> playlists = snapshot.data;
-
             return GridView.count(
               crossAxisCount: 2,
               crossAxisSpacing: 10.0,
@@ -47,28 +43,31 @@ class _PlaylistGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> children = <Widget>[
+      Expanded(
+        flex: 6,
+        child: LayoutBuilder(
+          builder: (context, constraint) => Icon(Icons.playlist_play, size: constraint.biggest.height),
+        ),
+      ),
+      Expanded(
+        flex: 4,
+        child: Text(
+          _playlist.identifier,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 15.0),
+        ),
+      ),
+    ];
+
+    Column column = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: children,
+    );
+
     return GridTile(
       child: GestureDetector(
-        child: Card(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                flex: 6,
-                child: LayoutBuilder(
-                    builder: (context, constraint) => Icon(Icons.playlist_play, size: constraint.biggest.height)),
-              ),
-              Expanded(
-                flex: 4,
-                child: Text(
-                  _playlist.identifier,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 15.0),
-                ),
-              )
-            ],
-          ),
-        ),
+        child: Card(child: column),
         onTap: () {
           MediaLibrary().playPlaylist(_playlist);
         },

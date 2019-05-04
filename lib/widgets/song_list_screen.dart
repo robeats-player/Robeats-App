@@ -10,30 +10,26 @@ class SongListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final MediaLibrary mediaLibrary = MediaLibrary();
 
+    StreamBuilder<List<Song>> streamBuilder = StreamBuilder(
+      stream: mediaLibrary.mediaLoader.loaderData.songListStream,
+      builder: (_, AsyncSnapshot<List<Song>> songListSnapshot) {
+        return ListView(
+            padding: EdgeInsets.only(top: 5.0), children: _SongListTile.prepareTiles(songListSnapshot.data));
+      },
+    );
+
+    FloatingActionButton floatingActionButton = FloatingActionButton(
+      child: Icon(Icons.queue_music, color: RobeatsThemeData.PRIMARY),
+      onPressed: () {
+        showModalBottomSheet(context: context, builder: (_) => _QueueBottomSheet());
+      },
+    );
+
     return RobeatsSlideUpPanel(
-      StreamBuilder<Song>(
-        stream: mediaLibrary.playerStateData.currentSongStream,
-        builder: (_, currentSongSnapshot) {
-          return Scaffold(
-            appBar: RobeatsAppBar(),
-            drawer: RobeatsDrawer(context),
-            body: StreamBuilder(
-                stream: mediaLibrary.mediaLoader.loaderData.songListStream,
-                builder: (_, AsyncSnapshot<List<Song>> songListSnapshot) {
-                  return ListView(
-                    padding: EdgeInsets.only(top: 5.0),
-                    children: _SongListTile.prepareTiles(songListSnapshot.data, currentSongSnapshot.data),
-                  );
-                }),
-            floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.queue_music, color: RobeatsThemeData.PRIMARY),
-              onPressed: () {
-                showModalBottomSheet(context: context, builder: (_) => _QueueBottomSheet());
-              },
-            ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-          );
-        },
+      DefaultScaffold(
+        streamBuilder,
+        floatingActionButton: floatingActionButton,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       ),
     );
   }
@@ -42,70 +38,74 @@ class SongListScreen extends StatelessWidget {
 class _QueueBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: StreamBuilder<StreamQueue<Song>>(
-        stream: MediaLibrary().playerStateData.songQueueStream,
-        builder: (_, s) => ListView(
-              padding: EdgeInsets.only(top: 5.0),
-              children: _QueueTile.prepareTiles(s.data),
-            ),
-      ),
+    StreamBuilder<StreamQueue<Song>> streamBuilder = StreamBuilder(
+      stream: MediaLibrary().playerStateData.songQueueStream,
+      builder: (_, s) {
+        return ListView(
+          padding: EdgeInsets.only(top: 5.0),
+          children: _QueueTile.prepareTiles(s.data),
+        );
+      },
     );
+
+    return Container(child: streamBuilder);
   }
 }
 
 class _SongListTile extends StatelessWidget {
   final Song _song;
-  final bool _current;
 
-  _SongListTile(this._song, this._current);
+  _SongListTile(this._song);
 
   @override
   Widget build(BuildContext context) {
     String title = _song?.title ?? "Unreadable";
     String artist = _song?.artist ?? "Unreadble";
 
-    return Container(
-      margin: EdgeInsets.only(top: 5.0),
-      decoration: BoxDecoration(
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.white,
-            spreadRadius: 1.5,
+    Decoration decoration = BoxDecoration(
+      boxShadow: <BoxShadow>[
+        BoxShadow(
+          color: Colors.white,
+          spreadRadius: 1.5,
+        ),
+      ],
+    );
+
+    Container trailingContainer = Container(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.queue),
+            onPressed: () {
+              MediaLibrary().songQueue.add(_song);
+            },
           ),
+          IconButton(
+            icon: Icon(Icons.play_circle_filled),
+            onPressed: () {
+              MediaLibrary().playSong(_song);
+            },
+          )
         ],
       ),
+    );
+
+    return Container(
+      margin: EdgeInsets.only(top: 5.0),
+      decoration: decoration,
       child: ListTile(
-        selected: _current,
         leading: Icon(Icons.music_note),
         title: Text("$title"),
         subtitle: Text("$artist"),
-        trailing: Container(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.queue),
-                onPressed: () {
-                  MediaLibrary().songQueue.add(_song);
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.play_circle_filled),
-                onPressed: () {
-                  MediaLibrary().playSong(_song);
-                },
-              )
-            ],
-          ),
-        ),
+        trailing: trailingContainer,
       ),
     );
   }
 
-  static List<_SongListTile> prepareTiles(Iterable<Song> iter, Song current) {
+  static List<_SongListTile> prepareTiles(Iterable<Song> iter) {
     if (iter != null) {
-      return iter.map((song) => _SongListTile(song, current == song)).toList();
+      return iter.map((song) => _SongListTile(song)).toList();
     } else {
       return List();
     }
@@ -120,33 +120,32 @@ class _QueueTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Decoration decoration = BoxDecoration(
+      boxShadow: <BoxShadow>[BoxShadow(color: Colors.white, spreadRadius: 1.5)],
+    );
+
+    Container trailingContainer = Container(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.play_circle_filled),
+            onPressed: () {
+              MediaLibrary().playQueue();
+            },
+          ),
+        ],
+      ),
+    );
+
     return Container(
+      margin: EdgeInsets.only(top: 5.0),
+      decoration: decoration,
       child: ListTile(
         leading: Icon(Icons.queue_music),
         title: Text("#${++_index} - ${_song.title}"),
         subtitle: Text("${_song.artist}"),
-        trailing: Container(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.play_circle_filled),
-                onPressed: () {
-                  MediaLibrary().playQueue();
-                },
-              )
-            ],
-          ),
-        ),
-      ),
-      margin: EdgeInsets.only(top: 5.0),
-      decoration: BoxDecoration(
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.white,
-            spreadRadius: 1.5,
-          )
-        ],
+        trailing: trailingContainer,
       ),
     );
   }

@@ -13,9 +13,7 @@ class PlayingBottomSheet extends StatelessWidget {
       stream: mediaLibrary.playerStateData.currentSongStream,
       builder: (_, AsyncSnapshot<Song> snapshot) {
         if (snapshot.data == null && mediaLibrary.songQueue.isEmpty) {
-          return Container(
-            height: 0,
-          );
+          return Container(height: 0);
         }
 
         return _PlayingContainer(snapshot.data == null ? mediaLibrary.songQueue.first : snapshot.data);
@@ -35,33 +33,30 @@ class _PlayingContainer extends StatelessWidget {
     String title = _song.title ?? "Unreadable";
     String artist = _song.artist ?? "Unreadable";
 
-    return Container(
-      color: Colors.white,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTile(
-            leading: Icon(Icons.music_note),
-            title: Text(title),
-            subtitle: Text(artist),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                StreamBuilder(
-                    stream: mediaLibrary.playerStateData.songStateStream,
-                    builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
-                      return IconButton(
-                        iconSize: 30.0,
-                        icon: Icon(_chooseIcon(snapshot.data)),
-                        onPressed: () => mediaLibrary.toggleState(),
-                      );
-                    }),
-              ],
-            ),
-          ),
-        ],
-      ),
+    StreamBuilder<AudioPlayerState> streamBuilder = StreamBuilder(
+      stream: mediaLibrary.playerStateData.songStateStream,
+      builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
+        return IconButton(
+          iconSize: 30.0,
+          icon: Icon(_chooseIcon(snapshot.data)),
+          onPressed: () => mediaLibrary.toggleState(),
+        );
+      },
     );
+
+    List<Widget> children = <Widget>[
+      ListTile(
+        leading: Icon(Icons.music_note),
+        title: Text(title),
+        subtitle: Text(artist),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[streamBuilder],
+        ),
+      ),
+    ];
+
+    return Container(color: Colors.white, child: Column(mainAxisSize: MainAxisSize.min, children: children));
   }
 
   IconData _chooseIcon(AudioPlayerState state) {

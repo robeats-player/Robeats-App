@@ -11,65 +11,63 @@ import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class RobeatsAppBar extends AppBar {
-  RobeatsAppBar()
-      : super(
-          title: Text(TITLE),
-        );
+  RobeatsAppBar() : super(title: Text(TITLE));
 }
 
-class RobeatsDrawer extends Drawer {
-  RobeatsDrawer(BuildContext buildContext)
-      : super(
-          child: ListView(
-            children: <Widget>[
-              DrawerHeader(
-                child: Text(
-                  "Navigate",
-                  style: TextStyle(fontSize: 25.0),
-                ),
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.book,
-                  size: 40.0,
-                ),
-                title: Text("Song List"),
-                onTap: () {
-                  Navigator.pushReplacement(
-                    buildContext,
-                    MaterialPageRoute(builder: (buildContext) => SongListScreen()),
-                  );
-                },
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.playlist_play,
-                  size: 40.0,
-                ),
-                title: Text("Playlists"),
-                onTap: () {
-                  Navigator.pushReplacement(
-                    buildContext,
-                    MaterialPageRoute(builder: (buildContext) => PlaylistScreen()),
-                  );
-                },
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.devices,
-                  size: 40.0,
-                ),
-                title: Text("Network Devices"),
-                onTap: () {
-                  Navigator.pushReplacement(
-                    buildContext,
-                    MaterialPageRoute(builder: (buildContext) => LocalNetworkScreen()),
-                  );
-                },
-              )
-            ],
-          ),
+class RobeatsDrawer extends StatelessWidget {
+  @override
+  Widget build(BuildContext buildContext) {
+    ListTile songListListTile = ListTile(
+      leading: Icon(
+        Icons.book,
+        size: 40.0,
+      ),
+      title: Text("Song List"),
+      onTap: () {
+        Navigator.pushReplacement(
+          buildContext,
+          MaterialPageRoute(builder: (buildContext) => SongListScreen()),
         );
+      },
+    );
+
+    ListTile playlistsListTile = ListTile(
+      leading: Icon(
+        Icons.playlist_play,
+        size: 40.0,
+      ),
+      title: Text("Playlists"),
+      onTap: () {
+        Navigator.pushReplacement(
+          buildContext,
+          MaterialPageRoute(builder: (buildContext) => PlaylistScreen()),
+        );
+      },
+    );
+
+    ListTile networkDevicesListTile = ListTile(
+      leading: Icon(
+        Icons.devices,
+        size: 40.0,
+      ),
+      title: Text("Network Devices"),
+      onTap: () {
+        Navigator.pushReplacement(
+          buildContext,
+          MaterialPageRoute(builder: (buildContext) => LocalNetworkScreen()),
+        );
+      },
+    );
+
+    List<Widget> children = <Widget>[
+      DrawerHeader(child: Text("Navigate", style: TextStyle(fontSize: 25.0))),
+      songListListTile,
+      playlistsListTile,
+      networkDevicesListTile,
+    ];
+
+    return Drawer(child: ListView(children: children));
+  }
 }
 
 class RobeatsSlideUpPanel extends StatelessWidget {
@@ -108,6 +106,28 @@ class RobeatsSlideUpPanel extends StatelessWidget {
         color: Colors.white,
         body: _body,
       ),
+    );
+  }
+}
+
+class DefaultScaffold extends StatelessWidget {
+  final Widget body;
+  final AppBar appBar;
+  final Drawer drawer;
+  final FloatingActionButton floatingActionButton;
+  final FloatingActionButtonLocation floatingActionButtonLocation;
+
+  DefaultScaffold(this.body, {this.appBar, this.drawer, this.floatingActionButton, this.floatingActionButtonLocation});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: appBar ?? RobeatsAppBar(),
+      drawer: drawer ?? RobeatsDrawer(),
+      bottomSheet: PlayingBottomSheet(),
+      body: body,
+      floatingActionButton: floatingActionButton,
+      floatingActionButtonLocation: floatingActionButtonLocation,
     );
   }
 }
