@@ -24,8 +24,10 @@ class StreamQueue<E> extends ListQueue<E> {
 
   @override
   bool remove(Object value) {
-    super.remove(value);
+    bool val = super.remove(value);
     _behaviorSubject.add(this);
+
+    return val;
   }
 
   @override

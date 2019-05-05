@@ -1,8 +1,8 @@
 import 'dart:collection';
+import 'dart:core';
 
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/main.dart';
-import 'package:Robeats/structures/data_structures/stream_collection/stream_queue.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -14,7 +14,7 @@ class PlayScreen extends StatelessWidget {
     List<Widget> children = <Widget>[
       Expanded(flex: 80, child: _MediaDisplay()),
       Expanded(flex: 45, child: _MediaControls()),
-      Expanded(flex: 75, child: _NextQueueSong()),
+      Expanded(flex: 75, child: _QueueSongList()),
     ];
 
     return Scaffold(
@@ -96,7 +96,7 @@ class _MediaControls extends StatelessWidget {
       builder: (_, AsyncSnapshot<double> snapshot) {
         double value = snapshot?.data;
 
-        return Slider(value: (value ??= 0), onChanged: (value) => _mediaLibrary.seekFraction(value));
+        return Slider(value: value ?? 0, onChanged: (value) => _mediaLibrary.seekFraction(value));
       },
     );
 
@@ -138,29 +138,52 @@ class _MediaControls extends StatelessWidget {
   }
 }
 
-class _NextQueueSong extends StatelessWidget {
+class _QueueSongList extends StatelessWidget {
   final MediaLibrary _mediaLibrary = MediaLibrary();
 
   @override
   Widget build(BuildContext context) {
-    StreamBuilder<Queue<Song>> streamBuilder = StreamBuilder(
+    return StreamBuilder(
       stream: _mediaLibrary.songQueue.behaviorSubject,
       builder: (_, AsyncSnapshot<Queue<Song>> snapshot) {
-        StreamQueue<Song> queue = snapshot.data;
-        Song song = queue != null && queue.isNotEmpty ? queue.first : null;
-        String title = song?.title;
-        String artist = song?.artist;
-
-        return ListTile(
-          leading: Icon(Icons.music_note),
-          title: Text("${title ??= "No upcoming"}"),
-          subtitle: Text("${artist ??= "Songs"}"),
-          trailing: Text("Up next"),
+        return ListView(
+          padding: EdgeInsets.only(top: 5.0),
+          children: _QueueSongListTile.prepareTiles(snapshot?.data),
         );
       },
     );
+  }
+}
 
-    List<Widget> children = <Widget>[Flexible(flex: 1, child: Container(color: Colors.white, child: streamBuilder))];
-    return Column(mainAxisAlignment: MainAxisAlignment.end, children: children);
+class _QueueSongListTile extends SongListTile {
+  final MediaLibrary _mediaLibrary = MediaLibrary();
+
+  _QueueSongListTile(Song song, [bool selected = false]) : super(song, Colors.white10, Icons.queue_play_next, selected);
+
+  static List<Widget> prepareTiles(Iterable<Song> iterable, [Song currentSong, Color colour, IconData icon]) {
+    if (iterable != null) {
+      return iterable.map((song) => _QueueSongListTile(song, currentSong == song)).toList(growable: false);
+    } else {
+      return [];
+    }
+  }
+
+  @override
+  Container createTrailingContainer(Song song) {
+    return Container(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.play_circle_filled),
+            onPressed: () {
+              if (_mediaLibrary.songQueue.remove(song)) {
+                _mediaLibrary.playSong(song);
+              }
+            },
+          )
+        ],
+      ),
+    );
   }
 }

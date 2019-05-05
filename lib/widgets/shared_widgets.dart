@@ -1,13 +1,16 @@
+import 'dart:collection';
 import 'dart:math' as math;
 
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/main.dart';
+import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/local_network_screen.dart';
 import 'package:Robeats/widgets/play_screen.dart';
 import 'package:Robeats/widgets/playing_bottom_sheet.dart';
 import 'package:Robeats/widgets/playlist_screen.dart';
 import 'package:Robeats/widgets/song_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class RobeatsAppBar extends AppBar {
@@ -78,31 +81,7 @@ class RobeatsSlideUpPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mediaLibrary = MediaLibrary();
-
-    mediaLibrary.playerStateData.currentSongStream.listen((song) {
-      if (song != null) {
-        if (!_panelController.isPanelShown()) {
-          _panelController.show();
-        }
-      } else {
-        if (_panelController.isPanelShown()) {
-          _panelController.hide();
-        }
-      }
-    });
-
-    mediaLibrary.songQueue.behaviorSubject.listen((queue) {
-      if (queue.isNotEmpty) {
-        if (!_panelController.isPanelShown()) {
-          _panelController.show();
-        }
-      } else {
-        if (_panelController.isPanelShown()) {
-          _panelController.hide();
-        }
-      }
-    });
+    _initiateSubscription();
 
     return SlidingUpPanel(
       borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -116,6 +95,32 @@ class RobeatsSlideUpPanel extends StatelessWidget {
       collapsed: PlayingBottomSheet(),
       color: Colors.transparent,
       body: _body,
+    );
+  }
+
+  void _initiateSubscription() {
+    MediaLibrary mediaLibrary = MediaLibrary();
+    Observable<List> observable = Observable.combineLatest2(
+      mediaLibrary.playerStateData.currentSongStream,
+      mediaLibrary.songQueue.behaviorSubject,
+          (a, b) => [a, b],
+    );
+
+    observable.listen(
+          (streams) {
+        Song currentSong = streams[0];
+        Queue<Song> queue = streams[1];
+
+        if (currentSong == null && queue.isEmpty) {
+          if (_panelController.isPanelShown()) {
+            _panelController.hide();
+          }
+        } else {
+          if (!_panelController.isPanelShown()) {
+            _panelController.show();
+          }
+        }
+      },
     );
   }
 }
@@ -137,6 +142,73 @@ class DefaultScaffold extends StatelessWidget {
       body: RobeatsSlideUpPanel(this.body),
       floatingActionButton: floatingActionButton,
       floatingActionButtonLocation: floatingActionButtonLocation,
+    );
+  }
+}
+
+class SongListTile extends StatelessWidget {
+  final MediaLibrary _mediaLibrary = MediaLibrary();
+  final Song _song;
+  final Color _colour;
+  final IconData _icon;
+  final bool _selected;
+
+  SongListTile(this._song, [this._colour, this._icon, this._selected = false]);
+
+  static List<Widget> prepareTiles(Iterable<Song> iterable, [Song currentSong, Color colour, IconData icon]) {
+    if (iterable != null) {
+      return iterable.map((song) => SongListTile(song, colour, icon, song == currentSong)).toList(growable: false);
+    } else {
+      return [];
+    }
+  }
+
+  Container createTrailingContainer(Song song) {
+    return Container(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.queue),
+            onPressed: () {
+              _mediaLibrary.songQueue.add(_song);
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.play_circle_filled),
+            onPressed: () {
+              _mediaLibrary.playSong(_song);
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String title = _song?.title ?? "Unreadable";
+    String artist = _song?.artist ?? "Unreadble";
+
+    Decoration decoration = BoxDecoration(
+      boxShadow: <BoxShadow>[
+        BoxShadow(
+          color: _colour ?? Colors.white,
+          spreadRadius: 1.5,
+        ),
+      ],
+    );
+
+    return Container(
+      margin: EdgeInsets.only(top: 5.0),
+      decoration: decoration,
+      child: ListTile(
+        selected: _selected,
+        leading: Icon(_icon ?? Icons.music_note),
+        title: Text("$title"),
+        subtitle: Text("$artist"),
+        trailing: createTrailingContainer(_song),
+      ),
     );
   }
 }
