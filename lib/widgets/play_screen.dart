@@ -1,6 +1,8 @@
+import 'dart:collection';
+
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/main.dart';
-import 'package:Robeats/structures/data_structures/stream_queue.dart';
+import 'package:Robeats/structures/data_structures/stream_collection/stream_queue.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -141,9 +143,9 @@ class _NextQueueSong extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    StreamBuilder<StreamQueue<Song>> streamBuilder = StreamBuilder(
-      stream: _mediaLibrary.playerStateData.songQueueStream,
-      builder: (_, AsyncSnapshot<StreamQueue<Song>> snapshot) {
+    StreamBuilder<Queue<Song>> streamBuilder = StreamBuilder(
+      stream: _mediaLibrary.songQueue.behaviorSubject,
+      builder: (_, AsyncSnapshot<Queue<Song>> snapshot) {
         StreamQueue<Song> queue = snapshot.data;
         Song song = queue != null && queue.isNotEmpty ? queue.first : null;
         String title = song?.title;

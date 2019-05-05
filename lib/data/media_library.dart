@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:Robeats/data/media_loader.dart';
 import 'package:Robeats/data/streams/player_state_data.dart';
 import 'package:Robeats/structures/data_structures/stack.dart';
-import 'package:Robeats/structures/data_structures/stream_queue.dart';
+import 'package:Robeats/structures/data_structures/stream_collection/stream_queue.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -15,11 +15,9 @@ class MediaLibrary {
   PlayerStateData _playerStateData = PlayerStateData();
   AudioPlayer _audioPlayer = AudioPlayer();
   Stack<Song> _songStack = Stack();
-  StreamQueue<Song> _songQueue;
+  StreamQueue<Song> _songQueue = StreamQueue();
 
   MediaLibrary._private() {
-    _songQueue = StreamQueue(_playerStateData.songQueueStream);
-
     _initialiseAudioEvents();
   }
 

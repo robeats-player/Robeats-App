@@ -10,7 +10,7 @@ class PlaylistScreen extends StatelessWidget {
 
     return DefaultScaffold(
       StreamBuilder(
-        stream: mediaLibrary.mediaLoader.loaderData.playlistSetStream,
+        stream: mediaLibrary.mediaLoader.playlistSet.behaviorSubject,
         builder: (_, AsyncSnapshot<Set<Playlist>> snapshot) {
           return GridView.count(
             crossAxisCount: 2,

@@ -3,16 +3,18 @@ import 'dart:collection';
 import 'package:rxdart/rxdart.dart';
 
 /**
- * Wrapper class for a [Queue]. This enables all changes to be registered with
+ * Wrapper class for a [Queue]. This enables most changes to be registered with
  * a [BehaviorSubject].
  */
 class StreamQueue<E> extends ListQueue<E> {
   BehaviorSubject<Queue<E>> _behaviorSubject;
 
-  StreamQueue(BehaviorSubject<Queue<E>> behaviorSubject) {
-    this._behaviorSubject = behaviorSubject;
+  StreamQueue() {
+    this._behaviorSubject = BehaviorSubject();
     _behaviorSubject.add(this);
   }
+
+  BehaviorSubject<Queue<E>> get behaviorSubject => _behaviorSubject;
 
   @override
   void clear() {

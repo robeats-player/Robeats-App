@@ -66,12 +66,9 @@ class Playlist extends JsonSerialisable {
 
   void save() async {
     MediaLoader mediaLoader = MediaLibrary().mediaLoader;
-    Set<Playlist> playlistSet = mediaLoader.playlistSet;
     JsonFile file = mediaLoader.jsonManager.jsonFiles['_playlists.json'];
 
-    playlistSet.add(this);
-    mediaLoader.loaderData.playlistSetStream.add(playlistSet);
-
+    mediaLoader.playlistSet.add(this);
     file.put(identifier, this);
     file.saveFile();
   }

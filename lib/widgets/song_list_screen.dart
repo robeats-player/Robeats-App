@@ -2,18 +2,27 @@ import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SongListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MediaLibrary mediaLibrary = MediaLibrary();
+    Observable<List> combined = Observable.combineLatest2(
+        mediaLibrary.mediaLoader.songList.behaviorSubject,
+        mediaLibrary.playerStateData.currentSongStream,
+            (a, b) => [a, b]
+    );
 
-    StreamBuilder<List<Song>> streamBuilder = StreamBuilder(
-      stream: mediaLibrary.mediaLoader.loaderData.songListStream,
-      builder: (_, AsyncSnapshot<List<Song>> songListSnapshot) {
+    StreamBuilder<List> streamBuilder = StreamBuilder(
+      stream: combined,
+      builder: (_, AsyncSnapshot<List> snapshot) {
+        List<Song> songList = snapshot.data != null ? snapshot.data[0] : [];
+        Song currentSong = snapshot.data != null ? snapshot.data[1] : null;
+
         return ListView(
           padding: EdgeInsets.only(top: 5.0),
-          children: _SongListTile.prepareTiles(songListSnapshot.data),
+          children: _SongListTile.prepareTiles(songList, currentSong),
         );
       },
     );
@@ -26,8 +35,9 @@ class SongListScreen extends StatelessWidget {
 
 class _SongListTile extends StatelessWidget {
   final Song _song;
+  final bool _selected;
 
-  _SongListTile(this._song);
+  _SongListTile(this._song, this._selected);
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +77,7 @@ class _SongListTile extends StatelessWidget {
       margin: EdgeInsets.only(top: 5.0),
       decoration: decoration,
       child: ListTile(
+        selected: _selected,
         leading: Icon(Icons.music_note),
         title: Text("$title"),
         subtitle: Text("$artist"),
@@ -75,9 +86,9 @@ class _SongListTile extends StatelessWidget {
     );
   }
 
-  static List<_SongListTile> prepareTiles(Iterable<Song> iter) {
+  static List<_SongListTile> prepareTiles(Iterable<Song> iter, Song currentSong) {
     if (iter != null) {
-      return iter.map((song) => _SongListTile(song)).toList();
+      return iter.map((song) => _SongListTile(song, song == currentSong)).toList();
     } else {
       return List();
     }

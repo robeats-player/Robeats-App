@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:Robeats/data/streams/loader_data.dart';
 import 'package:Robeats/persistence/json/json_manager.dart';
 import 'package:Robeats/persistence/json/structures/json_file.dart';
+import 'package:Robeats/structures/data_structures/stream_collection/stream_list.dart';
+import 'package:Robeats/structures/data_structures/stream_collection/stream_set.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dart_tags/dart_tags.dart';
@@ -11,17 +12,14 @@ import 'package:path_provider/path_provider.dart';
 
 class MediaLoader {
   JsonManager _jsonManager;
-  LoaderData _loaderData = LoaderData();
-  List<Song> _songList = List();
-  Set<Playlist> _playlistSet = Set();
+  StreamList<Song> _songList = StreamList();
+  StreamSet<Playlist> _playlistSet = StreamSet();
 
   JsonManager get jsonManager => _jsonManager;
 
-  LoaderData get loaderData => _loaderData;
+  StreamList<Song> get songList => _songList;
 
-  List<Song> get songList => _songList;
-
-  Set<Playlist> get playlistSet => _playlistSet;
+  StreamSet<Playlist> get playlistSet => _playlistSet;
 
   Song get randomSong {
     return _songList.elementAt(new Random().nextInt(_songList.length));
@@ -100,7 +98,6 @@ class MediaLoader {
         String hash = md5.convert(entity.readAsBytesSync()).toString();
 
         _songList.add(Song(fileName, songTitle, hash, artist, null));
-        _loaderData.songListStream.add(_songList);
       }
     }
   }
@@ -117,7 +114,6 @@ class MediaLoader {
       Playlist playlist = Playlist.deserialise(entry.key, entry.value);
 
       _playlistSet.add(playlist);
-      _loaderData.playlistSetStream.add(_playlistSet);
     }
   }
 }

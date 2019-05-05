@@ -79,17 +79,28 @@ class RobeatsSlideUpPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaLibrary = MediaLibrary();
+
     mediaLibrary.playerStateData.currentSongStream.listen((song) {
-      if (song != null && !_panelController.isPanelShown()) {
-        _panelController.show();
-      } else if (_panelController.isPanelShown() && mediaLibrary.songQueue.isEmpty && song == null) {
-        _panelController.hide();
+      if (song != null) {
+        if (!_panelController.isPanelShown()) {
+          _panelController.show();
+        }
+      } else {
+        if (_panelController.isPanelShown()) {
+          _panelController.hide();
+        }
       }
     });
 
-    mediaLibrary.playerStateData.songQueueStream.listen((songQueue) {
-      if (songQueue.isNotEmpty && !_panelController.isPanelShown()) {
-        _panelController.show();
+    mediaLibrary.songQueue.behaviorSubject.listen((queue) {
+      if (queue.isNotEmpty) {
+        if (!_panelController.isPanelShown()) {
+          _panelController.show();
+        }
+      } else {
+        if (_panelController.isPanelShown()) {
+          _panelController.hide();
+        }
       }
     });
 
