@@ -21,7 +21,7 @@ class SongListScreen extends StatelessWidget {
         Song currentSong = snapshot.data != null ? snapshot.data[1] : null;
 
         return ListView(
-          padding: EdgeInsets.only(top: 5.0),
+          padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
           children: SongListTile.prepareTiles(songList, currentSong),
         );
       },

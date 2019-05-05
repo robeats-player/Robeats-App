@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:math' as math;
 
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/main.dart';
@@ -191,6 +190,7 @@ class SongListTile extends StatelessWidget {
     String artist = _song?.artist ?? "Unreadble";
 
     Decoration decoration = BoxDecoration(
+      borderRadius: BorderRadius.all(Radius.circular(5.0)),
       boxShadow: <BoxShadow>[
         BoxShadow(
           color: _colour ?? Colors.white,
@@ -203,6 +203,7 @@ class SongListTile extends StatelessWidget {
       margin: EdgeInsets.only(top: 5.0),
       decoration: decoration,
       child: ListTile(
+        dense: true,
         selected: _selected,
         leading: Icon(_icon ?? Icons.music_note),
         title: Text("$title"),
@@ -210,55 +211,5 @@ class SongListTile extends StatelessWidget {
         trailing: createTrailingContainer(_song),
       ),
     );
-  }
-}
-
-class SemiCircleBorder extends CircleBorder {
-  MediaQueryData _data;
-
-  SemiCircleBorder(BuildContext context) {
-    this._data = MediaQuery.of(context);
-  }
-
-  double _calculateRadius(Rect rect) {
-    return (rect.shortestSide - side.width) / 2;
-  }
-
-  double _calculateWidthFraction(Rect rect) {
-    return (_data.size.width / _calculateRadius(rect)) / 2;
-  }
-
-  @override
-  EdgeInsetsGeometry get dimensions {
-    double w = side.width;
-    return EdgeInsets.fromLTRB(w, 0, w, w);
-  }
-
-  @override
-  Path getOuterPath(Rect rect, {TextDirection textDirection}) {
-    double radius = _calculateRadius(rect);
-    double fraction = _calculateWidthFraction(rect);
-
-    return Path()
-      ..addOval(
-        Rect.fromCircle(
-          center: Offset(radius * fraction, 0),
-          radius: rect.shortestSide,
-        ),
-      );
-  }
-
-  @override
-  Path getInnerPath(Rect rect, {TextDirection textDirection}) {
-    double radius = _calculateRadius(rect);
-    double fraction = _calculateWidthFraction(rect);
-
-    return Path()
-      ..addOval(
-        Rect.fromCircle(
-          center: Offset(radius * fraction, 0),
-          radius: math.max(0.0, rect.shortestSide - side.width),
-        ),
-      );
   }
 }

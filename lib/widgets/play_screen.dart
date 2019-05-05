@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'dart:core';
 
 import 'package:Robeats/data/media_library.dart';
-import 'package:Robeats/main.dart';
 import 'package:Robeats/structures/media.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -12,9 +11,9 @@ class PlayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> children = <Widget>[
-      Expanded(flex: 80, child: _MediaDisplay()),
-      Expanded(flex: 45, child: _MediaControls()),
-      Expanded(flex: 75, child: _QueueSongList()),
+      Expanded(flex: 1, child: _MediaDisplay()),
+      Expanded(flex: 1, child: _MediaControls()),
+      Expanded(flex: 2, child: _QueueSongList()),
     ];
 
     return Scaffold(
@@ -43,19 +42,8 @@ class _MediaDisplay extends StatelessWidget {
       builder: _prepareWidgetBuilder(),
     );
 
-    ShapeDecoration decoration = ShapeDecoration(
-      shape: SemiCircleBorder(context),
-      color: RobeatsThemeData.LIGHT,
-      shadows: <BoxShadow>[
-        BoxShadow(color: RobeatsThemeData.DARK, blurRadius: 5, spreadRadius: 1),
-      ],
-    );
-
     return Container(
-      width: data.size.width * 0.85,
-      height: data.size.height * 0.85,
       child: streamBuilder,
-      decoration: decoration,
     );
   }
 
@@ -147,7 +135,7 @@ class _QueueSongList extends StatelessWidget {
       stream: _mediaLibrary.songQueue.behaviorSubject,
       builder: (_, AsyncSnapshot<Queue<Song>> snapshot) {
         return ListView(
-          padding: EdgeInsets.only(top: 5.0),
+          padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
           children: _QueueSongListTile.prepareTiles(snapshot?.data),
         );
       },

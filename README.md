@@ -34,3 +34,7 @@ going to build the app, you must run the flutter command to create
 these - as I am using the default package com.example.... so it does not
 matter what you use. Eventually, I will include the files, once we use a
 package name.
+
+###### License Acknowledgements:
+Sliding up panel:
+This product includes software developed by Akshath Jain (https://akshathjain.com).
