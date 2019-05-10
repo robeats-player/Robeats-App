@@ -197,18 +197,22 @@ class MediaLibrary {
 
     if (totalDuration != null) {
       Duration duration = totalDuration * fraction;
-      seekTime(duration);
+      seekTime(duration, fraction: fraction);
     }
   }
 
   /**
    * Seeks the current position in the song (i.e. the cursor) to a specific
-   * [Duration].
+   * [Duration] and adds the fraction to the sink, if it's not -1.
    *
    * All checks for time extending the song's length are done
    * by audioplayers.
    */
-  void seekTime(Duration duration) {
+  void seekTime(Duration duration, {double fraction: -1}) {
     _audioPlayer.seek(duration);
+
+    if (fraction != -1) {
+      _playerStateData.songDurationStream.add(fraction);
+    }
   }
 }

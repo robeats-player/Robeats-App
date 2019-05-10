@@ -111,13 +111,9 @@ class RobeatsSlideUpPanel extends StatelessWidget {
         Queue<Song> queue = streams[1];
 
         if (currentSong == null && queue.isEmpty) {
-          if (_panelController.isPanelShown()) {
-            _panelController.hide();
-          }
+          _panelController.hide();
         } else {
-          if (!_panelController.isPanelShown()) {
-            _panelController.show();
-          }
+          _panelController.show();
         }
       },
     );
@@ -210,6 +206,34 @@ class SongListTile extends StatelessWidget {
         subtitle: Text("$artist"),
         trailing: createTrailingContainer(_song),
       ),
+    );
+  }
+}
+
+class RaisedIconButton extends StatelessWidget {
+  final Icon icon;
+  final VoidCallback onPressed;
+  final double elevation;
+  final double highlightElevation;
+  final double disabledElevation;
+  final Color backgroundColour;
+
+  RaisedIconButton({@required this.icon,
+    @required this.onPressed,
+    this.elevation = 6.0,
+    this.highlightElevation = 12.0,
+    this.disabledElevation = 0.0,
+    this.backgroundColour = Colors.transparent});
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      elevation: elevation,
+      highlightElevation: highlightElevation,
+      disabledElevation: disabledElevation,
+      backgroundColor: backgroundColour,
+      onPressed: onPressed,
+      child: icon,
     );
   }
 }

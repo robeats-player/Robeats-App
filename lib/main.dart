@@ -21,10 +21,10 @@ class RobeatsApp extends StatelessWidget {
 }
 
 class RobeatsThemeData {
-  static const Color PRIMARY = Color.fromRGBO(39, 39, 75, 1.0);
-  static const Color LIGHT = Color.fromRGBO(52, 52, 104, 1.0);
-  static const Color DARK = Color.fromRGBO(20, 20, 75, 1.0);
-  static const Color ACCENT = Color.fromRGBO(52, 152, 219, 1.0);
+  static const Color PRIMARY = Color.fromRGBO(66, 70, 89, 1.0);
+  static const Color LIGHT = Color.fromRGBO(94, 98, 98, 1.0);
+  static const Color DARK = Color.fromRGBO(35, 36, 45, 1.0);
+  static const Color ACCENT = Color.fromRGBO(153, 194, 77, 1.0);
   static const Color TEXT_COLOUR = Colors.white;
   static const Color TEXT_COLOUR_INVERSE = Colors.black;
   static ThemeData _instance;
@@ -54,7 +54,7 @@ class RobeatsThemeData {
           primaryColorDark: DARK,
           primaryColorLight: Colors.white,
           valueIndicatorTextStyle: TextStyle(color: Colors.white),
-        ),
+        ).copyWith(trackHeight: 4.0),
       );
     }
 

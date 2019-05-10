@@ -96,9 +96,8 @@ class _MediaControls extends StatelessWidget {
     StreamBuilder<AudioPlayerState> songStateStreamBuilder = StreamBuilder(
       stream: _mediaLibrary.playerStateData.songStateStream,
       builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
-        return IconButton(
-          iconSize: 60.0,
-          icon: Icon(_chooseIcon(snapshot.data), color: Colors.white),
+        return RaisedIconButton(
+          icon: Icon(_chooseIcon(snapshot.data), color: Colors.white, size: 60.0),
           onPressed: () => _mediaLibrary.toggleState(),
         );
       },
