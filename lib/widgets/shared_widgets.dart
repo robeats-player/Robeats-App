@@ -1,16 +1,11 @@
-import 'dart:collection';
-
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/main.dart';
 import 'package:Robeats/structures/media.dart';
+import 'package:Robeats/widgets/currently_playing/slide_up_panel.dart';
 import 'package:Robeats/widgets/local_network_screen.dart';
-import 'package:Robeats/widgets/play_screen.dart';
-import 'package:Robeats/widgets/playing_bottom_sheet.dart';
-import 'package:Robeats/widgets/playlist_screen.dart';
+import 'package:Robeats/widgets/playlists/playlist_screen.dart';
 import 'package:Robeats/widgets/song_list_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class RobeatsAppBar extends AppBar {
   RobeatsAppBar() : super(title: Text(TITLE), iconTheme: IconThemeData(color: Colors.white));
@@ -69,56 +64,6 @@ class RobeatsDrawer extends StatelessWidget {
     ];
 
     return Drawer(child: ListView(children: children));
-  }
-}
-
-class RobeatsSlideUpPanel extends StatelessWidget {
-  final _panelController = PanelController();
-  final Widget _body;
-
-  RobeatsSlideUpPanel(this._body);
-
-  @override
-  Widget build(BuildContext context) {
-    _initiateSubscription();
-
-    return SlidingUpPanel(
-      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-      minHeight: 90,
-      margin: EdgeInsets.only(bottom: 8.0),
-      padding: EdgeInsets.all(0.0),
-      renderPanelSheet: false,
-      controller: _panelController,
-      maxHeight: MediaQuery.of(context).size.height,
-      panel: PlayScreen(),
-      collapsed: PlayingBottomSheet(),
-      color: Colors.transparent,
-      body: _body,
-    );
-  }
-
-  void _initiateSubscription() {
-    MediaLibrary mediaLibrary = MediaLibrary();
-    Observable<List> observable = Observable.combineLatest2(
-      mediaLibrary.playerStateData.currentSongStream,
-      mediaLibrary.songQueue.behaviorSubject,
-          (a, b) => [a, b],
-    );
-
-    observable.listen(
-          (streams) {
-        Song currentSong = streams[0];
-        Queue<Song> queue = streams[1];
-
-        /* The stream is registered many times, I'll fix that at some point... For now, this will suffice. */
-        if (_panelController == null) return;
-
-        if (currentSong == null && queue.isEmpty)
-          _panelController.hide();
-        else
-          _panelController.show();
-      },
-    );
   }
 }
 

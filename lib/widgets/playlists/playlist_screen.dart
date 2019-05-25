@@ -1,5 +1,6 @@
 import 'package:Robeats/data/media_library.dart';
 import 'package:Robeats/structures/media.dart';
+import 'package:Robeats/widgets/playlists/playlist_creation_screen.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +8,11 @@ class PlaylistScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MediaLibrary mediaLibrary = MediaLibrary();
+
+    var button = new FloatingActionButton(
+      child: Icon(Icons.playlist_add),
+      onPressed: () => PlaylistCreation().pushRoute(context),
+    );
 
     return DefaultScaffold(
       StreamBuilder(
@@ -19,6 +25,7 @@ class PlaylistScreen extends StatelessWidget {
           );
         },
       ),
+      floatingActionButton: button,
     );
   }
 
@@ -53,7 +60,6 @@ class _PlaylistGridTile extends StatelessWidget {
         child: Text(
           _playlist.identifier,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white, fontSize: 15.0),
         ),
       ),
     ];

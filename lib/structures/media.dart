@@ -55,6 +55,11 @@ class Playlist extends JsonSerialisable {
     return Playlist(identifier, songs);
   }
 
+  factory Playlist.create(String identifier) {
+    return Playlist(identifier, [])
+      ..save();
+  }
+
   /**
    * Serialise a [Playlist] into a Json string.
    */

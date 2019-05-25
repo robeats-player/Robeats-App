@@ -41,9 +41,6 @@ class RobeatsThemeData {
         primaryColorDark: DARK,
         accentColor: ACCENT,
         textTheme: TextTheme().apply(displayColor: TEXT_COLOUR),
-        iconTheme: IconThemeData(color: PRIMARY),
-        primaryIconTheme: IconThemeData(color: Colors.black),
-        accentIconTheme: IconThemeData(color: ACCENT),
         sliderTheme: SliderThemeData.fromPrimaryColors(
           primaryColor: PRIMARY,
           primaryColorDark: DARK,
