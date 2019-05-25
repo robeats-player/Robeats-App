@@ -23,15 +23,15 @@ class PlayScreen extends StatelessWidget {
   }
 
   AppBar _prepareAppBar() {
-    Icon icon = Icon(Icons.keyboard_arrow_down, size: 30.0, color: Colors.white);
-    return AppBar(leading: icon);
+    Icon icon = Icon(Icons.keyboard_arrow_down, size: 30.0);
+    return AppBar(leading: icon, elevation: 0, backgroundColor: Colors.transparent,);
   }
 }
 
 class _MediaDisplay extends StatelessWidget {
   final MediaLibrary _mediaLibrary = MediaLibrary();
-  final TextStyle _songStyle = TextStyle(color: Colors.white, fontSize: 25.0);
-  final TextStyle _artistStyle = TextStyle(color: Colors.white, fontSize: 15.0);
+  final TextStyle _songStyle = TextStyle(fontSize: 25.0);
+  final TextStyle _artistStyle = TextStyle(fontSize: 15.0);
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +96,9 @@ class _MediaControls extends StatelessWidget {
     StreamBuilder<AudioPlayerState> songStateStreamBuilder = StreamBuilder(
       stream: _mediaLibrary.playerStateData.songStateStream,
       builder: (_, AsyncSnapshot<AudioPlayerState> snapshot) {
-        return RaisedIconButton(
-          icon: Icon(_chooseIcon(snapshot.data), color: Colors.white, size: 60.0),
+        return IconButton(
+          iconSize: 60,
+          icon: Icon(_chooseIcon(snapshot.data)),
           onPressed: () => _mediaLibrary.toggleState(),
         );
       },
@@ -106,13 +107,13 @@ class _MediaControls extends StatelessWidget {
     List<Widget> children = <Widget>[
       IconButton(
         iconSize: 40.0,
-        icon: Icon(Icons.skip_previous, color: Colors.white),
+        icon: Icon(Icons.skip_previous),
         onPressed: () => _mediaLibrary.playPrevious(),
       ),
       songStateStreamBuilder,
       IconButton(
         iconSize: 40.0,
-        icon: Icon(Icons.skip_next, color: Colors.white),
+        icon: Icon(Icons.skip_next),
         onPressed: () => _mediaLibrary.playNext(),
       ),
     ];
@@ -133,10 +134,12 @@ class _QueueSongList extends StatelessWidget {
     return StreamBuilder(
       stream: _mediaLibrary.songQueue.behaviorSubject,
       builder: (_, AsyncSnapshot<Queue<Song>> snapshot) {
-        return ListView(
+        ListView listView = ListView(
           padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
           children: _QueueSongListTile.prepareTiles(snapshot?.data),
         );
+
+        return Scrollbar(child: listView);
       },
     );
   }

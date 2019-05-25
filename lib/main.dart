@@ -21,12 +21,12 @@ class RobeatsApp extends StatelessWidget {
 }
 
 class RobeatsThemeData {
-  static const Color PRIMARY = Color.fromRGBO(66, 70, 89, 1.0);
-  static const Color LIGHT = Color.fromRGBO(94, 98, 98, 1.0);
-  static const Color DARK = Color.fromRGBO(35, 36, 45, 1.0);
-  static const Color ACCENT = Color.fromRGBO(153, 194, 77, 1.0);
-  static const Color TEXT_COLOUR = Colors.white;
-  static const Color TEXT_COLOUR_INVERSE = Colors.black;
+  static const Color PRIMARY = Color.fromRGBO(63, 81, 181, 1.0);
+  static const Color LIGHT = Color.fromRGBO(92, 107, 192, 1.0);
+  static const Color DARK = Color.fromRGBO(92, 107, 192, 1.0);
+  static const Color ACCENT = Color.fromRGBO(255, 193, 7, 1.0);
+  static const Color TEXT_COLOUR = Colors.black;
+  static const Color TEXT_COLOUR_INVERSE = Colors.white;
   static ThemeData _instance;
 
   // Cannot be instantiated.
@@ -35,26 +35,21 @@ class RobeatsThemeData {
   static ThemeData getThemeData() {
     if (_instance == null) {
       _instance = ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.purple,
         primaryColor: PRIMARY,
         primaryColorLight: LIGHT,
         primaryColorDark: DARK,
         accentColor: ACCENT,
         textTheme: TextTheme().apply(displayColor: TEXT_COLOUR),
-        scaffoldBackgroundColor: PRIMARY,
-        bottomAppBarColor: LIGHT,
-        cardColor: DARK,
-        splashColor: DARK,
         iconTheme: IconThemeData(color: PRIMARY),
-        primaryIconTheme: IconThemeData(color: Colors.white),
+        primaryIconTheme: IconThemeData(color: Colors.black),
         accentIconTheme: IconThemeData(color: ACCENT),
-        backgroundColor: LIGHT,
         sliderTheme: SliderThemeData.fromPrimaryColors(
-          primaryColor: Colors.white,
+          primaryColor: PRIMARY,
           primaryColorDark: DARK,
-          primaryColorLight: Colors.white,
+          primaryColorLight: LIGHT,
           valueIndicatorTextStyle: TextStyle(color: Colors.white),
-        ).copyWith(trackHeight: 4.0),
+        ).copyWith(trackHeight: 2.0),
       );
     }
 

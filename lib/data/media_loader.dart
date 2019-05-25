@@ -10,6 +10,9 @@ import 'package:crypto/crypto.dart';
 import 'package:dart_tags/dart_tags.dart';
 import 'package:path_provider/path_provider.dart';
 
+/**
+ * This class is reponsible for loading all media files, i.e. the songs and playlists themselves.
+ */
 class MediaLoader {
   JsonManager _jsonManager;
   StreamList<Song> _songList = StreamList();
@@ -97,7 +100,8 @@ class MediaLoader {
         String artist = metaTags?.tags['artist'];
         String hash = md5.convert(entity.readAsBytesSync()).toString();
 
-        _songList.add(Song(fileName, songTitle, hash, artist, null));
+        Song song = Song(fileName, songTitle, hash, artist, null);
+        _songList.add(song);
       }
     }
   }

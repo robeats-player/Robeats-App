@@ -1,4 +1,4 @@
-import 'package:Robeats/structures/device.dart';
+import 'package:Robeats/device/device.dart';
 import 'package:Robeats/widgets/shared_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +14,7 @@ class LocalNetworkScreen extends StatelessWidget {
   }
 
   GridView _createGridView() {
-    List<Widget> widgets = [_NetworkGridTile(Device.localDevice)]; //todo: load this from bloc.
+    List<Widget> widgets = [_NetworkGridTile(Device.LOCAL_DEVICE)]; //todo: load this from bloc.
 
     return GridView.count(
       crossAxisCount: 3,
@@ -41,7 +41,6 @@ class _NetworkGridTile extends StatelessWidget {
         child: Text(
           _device.chosenIdentifier,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white, fontSize: 15.0),
         ),
       ),
     ];

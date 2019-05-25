@@ -8,6 +8,11 @@ import 'package:Robeats/structures/data_structures/stream_collection/stream_queu
 import 'package:Robeats/structures/media.dart';
 import 'package:audioplayers/audioplayers.dart';
 
+/**
+ * The MediaLibrary is responsible for playing songs, managing the currently playing song, and managing the queue
+ * of songs. This is a singleton as only one MediaLibrary can exist for the app. Furthermore, this class contains
+ * the MediaLoader instance that will be used; i.e. the MediaLoader belongs to the MediaLibrary.
+ */
 class MediaLibrary {
   static final MediaLibrary _instance = MediaLibrary._private();
   final MediaLoader _mediaLoader = MediaLoader();
@@ -87,6 +92,15 @@ class MediaLibrary {
     song.duration ??= await _audioPlayer.onDurationChanged.first;
   }
 
+  bool addToQueue(Song song) {
+    if (!_songQueue.contains(song)) {
+      _songQueue.add(song);
+      return true;
+    }
+
+    return false;
+  }
+
   /**
    * Play all songs in the [Queue]. The queue can be added to from the songs
    * list screen.
@@ -155,9 +169,8 @@ class MediaLibrary {
   void playPrevious() {
     Song song = _songStack.pop();
 
-    if (song != null) {
+    if (song != null)
       playSong(song, false);
-    }
   }
 
   /**
@@ -178,9 +191,8 @@ class MediaLibrary {
       index %= _mediaLoader.songList.length;
 
       song = _mediaLoader.songList[index];
-    } else {
+    } else
       song = _mediaLoader.randomSong;
-    }
 
     playSong(song);
   }

@@ -13,7 +13,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class RobeatsAppBar extends AppBar {
-  RobeatsAppBar() : super(title: Text(TITLE));
+  RobeatsAppBar() : super(title: Text(TITLE), iconTheme: IconThemeData(color: Colors.white));
 }
 
 class RobeatsDrawer extends StatelessWidget {
@@ -110,11 +110,13 @@ class RobeatsSlideUpPanel extends StatelessWidget {
         Song currentSong = streams[0];
         Queue<Song> queue = streams[1];
 
-        if (currentSong == null && queue.isEmpty) {
+        /* The stream is registered many times, I'll fix that at some point... For now, this will suffice. */
+        if (_panelController == null) return;
+
+        if (currentSong == null && queue.isEmpty)
           _panelController.hide();
-        } else {
+        else
           _panelController.show();
-        }
       },
     );
   }
@@ -166,7 +168,7 @@ class SongListTile extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.queue),
             onPressed: () {
-              _mediaLibrary.songQueue.add(_song);
+              _mediaLibrary.addToQueue(_song);
             },
           ),
           IconButton(

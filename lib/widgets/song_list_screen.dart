@@ -20,10 +20,12 @@ class SongListScreen extends StatelessWidget {
         List<Song> songList = snapshot.data != null ? snapshot.data[0] : [];
         Song currentSong = snapshot.data != null ? snapshot.data[1] : null;
 
-        return ListView(
+        ListView listView = ListView(
           padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
           children: SongListTile.prepareTiles(songList, currentSong),
         );
+
+        return Scrollbar(child: listView);
       },
     );
 
