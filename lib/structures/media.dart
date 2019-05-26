@@ -49,9 +49,9 @@ class Playlist extends JsonSerialisable {
    */
   factory Playlist.deserialise(String identifier, Map<String, dynamic> serialised) {
     MediaLoader mediaLoader = MediaLibrary().mediaLoader;
-    List<String> hashes = serialised['songs'];
+    List<String> hashes = List<String>.from(serialised['songs']);
 
-    List<Song> songs = mediaLoader.songList.where((song) => hashes.contains(song.hash));
+    List<Song> songs = mediaLoader.songList.where((song) => hashes.contains(song.hash)).toList();
     return Playlist(identifier, songs);
   }
 

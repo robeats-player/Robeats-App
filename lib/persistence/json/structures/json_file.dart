@@ -12,31 +12,27 @@ class JsonFile {
   /**
    * Constructor to instantiate a [JsonFile].
    */
-  JsonFile(this._file) {
-    reloadFile();
-  }
+  JsonFile(this._file);
 
   /**
    * Private utility method, if the [File] does not exist, create it. If the parameter write
    * is true, then write an empty object "{}" to the [File] as well. Otherwise, merely create
-   * the [File].
+   * the [File]. Returns true if a new file was created and/or written to.
    */
   Future<bool> _createIfNotExists([bool write = true]) async {
-    if (_file != null && !_file.existsSync()) {
-      if (write) {
-        _file.writeAsString(EMPTY_OBJECT);
-      } else {
-        _file.create();
-      }
-    }
+    if (_file != null && !_file.existsSync())
+      if (write)
+        await _file.writeAsString(EMPTY_OBJECT);
+      else
+        await _file.create();
 
     return false;
   }
 
   /**
-   * Create the file if it does not exist, and read its data to the [Map].
+   * Create the file if it does not exist, and if it did exist, read its data to the [Map].
    */
-  void reloadFile() async {
+  Future<void> reloadFile() async {
     if (!(await _createIfNotExists())) {
       String fileContent = await _file.readAsString();
       data = jsonDecode(fileContent);
@@ -46,11 +42,11 @@ class JsonFile {
   /**
    * Create the file if it does not exist, and serialise the [Map] and write it to the file.
    */
-  void saveFile() {
-    _createIfNotExists(false);
+  Future<void> saveFile() async {
+    await _createIfNotExists(false);
 
     String dataContent = jsonEncode(data);
-    _file.writeAsString(dataContent);
+    await _file.writeAsString(dataContent);
   }
 
   /**

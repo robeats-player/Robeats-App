@@ -7,11 +7,8 @@ class JsonManager {
   final List<File> _fileList = [];
 
   JsonManager(Directory directory, List<String> fileNames) {
-    for (String path in fileNames) {
+    for (String path in fileNames)
       _fileList.add(File(directory.path + '/' + path));
-    }
-
-    loadAll();
   }
 
   Map<String, JsonFile> get jsonFiles => _jsonFiles;
@@ -19,14 +16,17 @@ class JsonManager {
   /**
    * Load all [File]s, if they're a Json file, and add them to the [List].
    */
-  void loadAll() {
+  Future<void> loadAll() async {
     for (File file in _fileList) {
       String fileName = file.path.split('/').last;
 
-      if (_jsonFiles.containsKey(fileName)) {
-        _jsonFiles[fileName].reloadFile();
-      } else {
-        _jsonFiles[fileName] = JsonFile(file);
+      if (_jsonFiles.containsKey(fileName))
+        await _jsonFiles[fileName].reloadFile();
+      else {
+        JsonFile jsonFile = JsonFile(file);
+
+        _jsonFiles[fileName] = jsonFile;
+        await jsonFile.reloadFile();
       }
     }
   }

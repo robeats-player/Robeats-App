@@ -68,19 +68,20 @@ class MediaLoader {
     return tags.firstWhere((tag) => tag != null && tag.tags.isNotEmpty, orElse: () => null);
   }
 
-  void _initialiseJsonManager() async {
-    List<String> files = <String>[
-      "_playlists.json",
-    ];
-
-    _jsonManager = JsonManager(await directory, files);
-  }
-
   /**
    * Load all songs & playlists.
    */
   Future<void> load() async {
     await _loadSongs().then((_) => _initialiseJsonManager()).then((_) => _loadPlaylists());
+  }
+
+  Future<void> _initialiseJsonManager() async {
+    List<String> files = <String>[
+      "_playlists.json",
+    ];
+
+    _jsonManager = JsonManager(await directory, files);
+    await _jsonManager.loadAll();
   }
 
   /**
