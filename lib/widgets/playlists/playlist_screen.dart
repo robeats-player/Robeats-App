@@ -26,6 +26,7 @@ class PlaylistScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: button,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
 

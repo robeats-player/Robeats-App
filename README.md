@@ -1,22 +1,9 @@
-# Robeats Mobile App
+# Robeats-Player Mobile App
 
 #### Description:
-An application to play music, in the background, on an iOS or Android 
-mobile device. This app can be synced with the 
-[Robeats Desktop software](http://github.com/robeats-player/Robeats-Desktop "Robeats Desktop software") 
-to exchange music over a local network, using the 
-[Robeats State Protocol](http://github.com/robeats-player/Robeats-State-Protocol "Robeats State Protocol").
-
-
-
-##### Dart & Flutter:
-The app is developed using the Flutter framework, for Dart. This was 
-viewed as the best option, due to its ability to write native apps for
-Android and iOS, once, and for Dart's language. I, personally, looked 
-forward to using Dart and Flutter for a project, and this seemed like 
-the perfect time.
-
-
+The Robeats-Player app; to allow the user to play music from local storage, and sync media 
+over a local network with the Robeats-Desktop application. The app is written using the 
+Flutter framework for Dart, allowing the app to be ran natively on Android and iOS.
 
 ##### Contributing:
 I welcome all contribution, in the form of pull-requests that anybody 
@@ -27,6 +14,18 @@ turn this on. If you do not use an IDE capable of supporting dartfmt,
 Furthermore, ensure your line width is 120! Any PRs with incorrect
 styling, or many additions and deletions due to styling, will be
 ignored.
+
+#### Take a look:
+
+##### Notice:
+The app is not finished yet, and the design is by no means finished whatsoever; the colours may change, the entire layout may chance in the course of one commit. So, these screenshots are by no means a representation of the final look, or even how it looks now.
+
+##### Screenshots:
+![alt text](https://i.imgur.com/Md2KxIt.jpg "Song List screen")
+
+![alt text](https://i.imgur.com/BdvH0sE.jpg "Playlists screen")
+
+![alt text](https://i.imgur.com/EKhGWVk.jpg "Currently Playing slide-up panel")
 
 ###### Side-Note:
 I have not included, as of yet, any android or ios files. If you are 
