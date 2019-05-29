@@ -27,37 +27,53 @@ class PlaylistCreation extends StatelessWidget {
         String value = textEditingController.value.text;
         Playlist playlist = Playlist.create(value);
 
-        print("Created playlist ${playlist.identifier}");
         popRoute(context);
       }
     };
 
-    Form form = _createForm([Center(child: formField)], callback);
+    Form form = _createForm([Center(child: formField)], callback, context);
+    Icon icon = Icon(
+      Icons.library_music,
+      size: 45.0,
+    );
 
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [form],
+        children: [
+          Padding(child: icon, padding: EdgeInsets.only(bottom: 40.0)),
+          form,
+        ],
       ),
     );
   }
 
-  Form _createForm(List<Widget> fields, Function onPressed) {
+  Form _createForm(List<Widget> fields, Function onPressed, BuildContext context) {
     List<Widget> children = List<Widget>.from(fields);
     var key = GlobalKey<FormState>();
 
-    children.add(
-      Padding(
-        padding: EdgeInsets.only(top: 20.0),
-        child: RaisedButton(
-          color: RobeatsThemeData.PRIMARY,
-          textColor: Colors.white,
-          onPressed: () => onPressed(key),
-          child: Text("Create"),
-        ),
-      ),
+    RaisedButton exitButton = RaisedButton(
+      color: RobeatsThemeData.PRIMARY,
+      textColor: Colors.white,
+      onPressed: () => popRoute(context),
+      child: Text("Exit"),
     );
+
+    RaisedButton createButton = RaisedButton(
+      color: RobeatsThemeData.PRIMARY,
+      textColor: Colors.white,
+      onPressed: () => onPressed(key),
+      child: Text("Create"),
+    );
+
+    children.add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Padding(child: exitButton, padding: EdgeInsets.only(top: 20.0)),
+        Padding(child: createButton, padding: EdgeInsets.only(top: 20, left: 15.0))
+      ],
+    ));
 
     return Form(
       key: key,

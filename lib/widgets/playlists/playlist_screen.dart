@@ -9,7 +9,7 @@ class PlaylistScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final MediaLibrary mediaLibrary = MediaLibrary();
 
-    var button = new FloatingActionButton(
+    var button = FloatingActionButton(
       child: Icon(Icons.playlist_add),
       onPressed: () => PlaylistCreation().pushRoute(context),
     );
@@ -18,11 +18,7 @@ class PlaylistScreen extends StatelessWidget {
       StreamBuilder(
         stream: mediaLibrary.mediaLoader.playlistSet.behaviorSubject,
         builder: (_, AsyncSnapshot<Set<Playlist>> snapshot) {
-          return GridView.count(
-            crossAxisCount: 2,
-            crossAxisSpacing: 10.0,
-            children: _prepareWidgets(snapshot),
-          );
+          return GridView.count(crossAxisCount: 2, crossAxisSpacing: 10.0, children: _prepareWidgets(snapshot));
         },
       ),
       floatingActionButton: button,
@@ -32,11 +28,12 @@ class PlaylistScreen extends StatelessWidget {
 
   List<Widget> _prepareWidgets(AsyncSnapshot<Set<Playlist>> snapshot) {
     Set<Playlist> playlists = snapshot.data;
-    List<Widget> widgets = [];
+    List<Widget> widgets;
 
-    if (playlists != null) {
+    if (playlists != null)
       widgets = playlists.map((playlist) => _PlaylistGridTile(playlist)).toList();
-    }
+    else
+      widgets = [];
 
     return widgets;
   }

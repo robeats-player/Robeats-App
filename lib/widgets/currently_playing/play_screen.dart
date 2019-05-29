@@ -24,7 +24,7 @@ class PlayScreen extends StatelessWidget {
 
   AppBar _prepareAppBar() {
     Icon icon = Icon(Icons.keyboard_arrow_down, size: 30.0, color: Colors.grey[400]);
-    return AppBar(leading: icon, elevation: 0, backgroundColor: Colors.transparent,);
+    return AppBar(leading: icon, elevation: 0, backgroundColor: Colors.transparent);
   }
 }
 
