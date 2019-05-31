@@ -11,7 +11,11 @@ class PlaylistScreen extends StatelessWidget {
 
     var button = FloatingActionButton(
       child: Icon(Icons.playlist_add),
-      onPressed: () => PlaylistCreation().pushRoute(context),
+      onPressed: () =>
+          showDialog(
+            context: context,
+            builder: (context) => PlaylistCreationDialog(),
+          ),
     );
 
     return DefaultScaffold(

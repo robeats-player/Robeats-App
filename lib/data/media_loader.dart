@@ -121,4 +121,9 @@ class MediaLoader {
       _playlistSet.add(playlist);
     }
   }
+
+  Iterable<Playlist> getMatchingPlaylists(String identifier) {
+    bool matching(String a, String b) => a?.toLowerCase() == b?.toLowerCase();
+    return _playlistSet.where((playlist) => matching(playlist.identifier, identifier));
+  }
 }
